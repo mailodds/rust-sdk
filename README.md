@@ -1,5 +1,7 @@
 # MailOdds SDK for Rust
 
+[![crates.io](https://img.shields.io/crates/v/mailodds)](https://crates.io/crates/mailodds)
+
 Official Rust client for the [MailOdds Email Validation API](https://mailodds.com/docs).
 
 ## Installation

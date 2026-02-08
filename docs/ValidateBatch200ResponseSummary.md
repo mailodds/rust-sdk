@@ -1,12 +1,14 @@
-# ValidationResponseSuppressionMatch
+# ValidateBatch200ResponseSummary
 
 ## Properties
 
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**match_type** | Option<**MatchType**> |  (enum: email, domain) | [optional]
-**match_value** | Option<**String**> |  | [optional]
-**reason** | Option<**String**> |  | [optional]
+**valid** | Option<**i32**> |  | [optional]
+**invalid** | Option<**i32**> |  | [optional]
+**catch_all** | Option<**i32**> |  | [optional]
+**unknown** | Option<**i32**> |  | [optional]
+**do_not_mail** | Option<**i32**> |  | [optional]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

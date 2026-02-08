@@ -11,39 +11,26 @@
 use crate::models;
 use serde::{Deserialize, Serialize};
 
-/// ValidationResponseSuppressionMatch : Present only when email matched a suppression list entry.
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
-pub struct ValidationResponseSuppressionMatch {
-    #[serde(rename = "match_type", skip_serializing_if = "Option::is_none")]
-    pub match_type: Option<MatchType>,
-    #[serde(rename = "match_value", skip_serializing_if = "Option::is_none")]
-    pub match_value: Option<String>,
-    #[serde(rename = "reason", skip_serializing_if = "Option::is_none")]
-    pub reason: Option<String>,
+pub struct ValidateBatch200Response {
+    #[serde(rename = "schema_version", skip_serializing_if = "Option::is_none")]
+    pub schema_version: Option<String>,
+    #[serde(rename = "total", skip_serializing_if = "Option::is_none")]
+    pub total: Option<i32>,
+    #[serde(rename = "summary", skip_serializing_if = "Option::is_none")]
+    pub summary: Option<Box<models::ValidateBatch200ResponseSummary>>,
+    #[serde(rename = "results", skip_serializing_if = "Option::is_none")]
+    pub results: Option<Vec<models::ValidationResponse>>,
 }
 
-impl ValidationResponseSuppressionMatch {
-    /// Present only when email matched a suppression list entry.
-    pub fn new() -> ValidationResponseSuppressionMatch {
-        ValidationResponseSuppressionMatch {
-            match_type: None,
-            match_value: None,
-            reason: None,
+impl ValidateBatch200Response {
+    pub fn new() -> ValidateBatch200Response {
+        ValidateBatch200Response {
+            schema_version: None,
+            total: None,
+            summary: None,
+            results: None,
         }
-    }
-}
-/// 
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
-pub enum MatchType {
-    #[serde(rename = "email")]
-    Email,
-    #[serde(rename = "domain")]
-    Domain,
-}
-
-impl Default for MatchType {
-    fn default() -> MatchType {
-        Self::Email
     }
 }
 

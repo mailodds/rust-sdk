@@ -11,39 +11,39 @@
 use crate::models;
 use serde::{Deserialize, Serialize};
 
-/// ValidationResponseSuppressionMatch : Present only when email matched a suppression list entry.
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
-pub struct ValidationResponseSuppressionMatch {
-    #[serde(rename = "match_type", skip_serializing_if = "Option::is_none")]
-    pub match_type: Option<MatchType>,
-    #[serde(rename = "match_value", skip_serializing_if = "Option::is_none")]
-    pub match_value: Option<String>,
-    #[serde(rename = "reason", skip_serializing_if = "Option::is_none")]
-    pub reason: Option<String>,
+pub struct ValidateBatchRequest {
+    /// List of emails to validate
+    #[serde(rename = "emails")]
+    pub emails: Vec<String>,
+    #[serde(rename = "depth", skip_serializing_if = "Option::is_none")]
+    pub depth: Option<Depth>,
+    /// Optional policy ID
+    #[serde(rename = "policy_id", skip_serializing_if = "Option::is_none")]
+    pub policy_id: Option<i32>,
 }
 
-impl ValidationResponseSuppressionMatch {
-    /// Present only when email matched a suppression list entry.
-    pub fn new() -> ValidationResponseSuppressionMatch {
-        ValidationResponseSuppressionMatch {
-            match_type: None,
-            match_value: None,
-            reason: None,
+impl ValidateBatchRequest {
+    pub fn new(emails: Vec<String>) -> ValidateBatchRequest {
+        ValidateBatchRequest {
+            emails,
+            depth: None,
+            policy_id: None,
         }
     }
 }
 /// 
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
-pub enum MatchType {
-    #[serde(rename = "email")]
-    Email,
-    #[serde(rename = "domain")]
-    Domain,
+pub enum Depth {
+    #[serde(rename = "standard")]
+    Standard,
+    #[serde(rename = "enhanced")]
+    Enhanced,
 }
 
-impl Default for MatchType {
-    fn default() -> MatchType {
-        Self::Email
+impl Default for Depth {
+    fn default() -> Depth {
+        Self::Standard
     }
 }
 

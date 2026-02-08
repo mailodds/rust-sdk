@@ -15,6 +15,15 @@ use crate::{apis::ResponseContent, models};
 use super::{Error, configuration, ContentType};
 
 
+/// struct for typed errors of method [`validate_batch`]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum ValidateBatchError {
+    Status400(models::ErrorResponse),
+    Status401(models::ErrorResponse),
+    UnknownValue(serde_json::Value),
+}
+
 /// struct for typed errors of method [`validate_email`]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
@@ -25,6 +34,47 @@ pub enum ValidateEmailError {
     UnknownValue(serde_json::Value),
 }
 
+
+/// Validate up to 100 email addresses synchronously. For larger lists, use the bulk jobs API.
+pub async fn validate_batch(configuration: &configuration::Configuration, validate_batch_request: models::ValidateBatchRequest) -> Result<models::ValidateBatch200Response, Error<ValidateBatchError>> {
+    // add a prefix to parameters to efficiently prevent name collisions
+    let p_body_validate_batch_request = validate_batch_request;
+
+    let uri_str = format!("{}/v1/validate/batch", configuration.base_path);
+    let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
+
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+    }
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    req_builder = req_builder.json(&p_body_validate_batch_request);
+
+    let req = req_builder.build()?;
+    let resp = configuration.client.execute(req).await?;
+
+    let status = resp.status();
+    let content_type = resp
+        .headers()
+        .get("content-type")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("application/octet-stream");
+    let content_type = super::ContentType::from(content_type);
+
+    if !status.is_client_error() && !status.is_server_error() {
+        let content = resp.text().await?;
+        match content_type {
+            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::ValidateBatch200Response`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::ValidateBatch200Response`")))),
+        }
+    } else {
+        let content = resp.text().await?;
+        let entity: Option<ValidateBatchError> = serde_json::from_str(&content).ok();
+        Err(Error::ResponseError(ResponseContent { status, content, entity }))
+    }
+}
 
 /// Validate a single email address. Returns detailed validation results including status, sub-status, and recommended action.
 pub async fn validate_email(configuration: &configuration::Configuration, validate_request: models::ValidateRequest) -> Result<models::ValidationResponse, Error<ValidateEmailError>> {

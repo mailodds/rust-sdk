@@ -11,52 +11,86 @@
 use crate::models;
 use serde::{Deserialize, Serialize};
 
+/// ValidationResponse : Flat validation response. Conditional fields are omitted (not null) when not applicable.
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ValidationResponse {
-    #[serde(rename = "schema_version", skip_serializing_if = "Option::is_none")]
-    pub schema_version: Option<String>,
+    #[serde(rename = "schema_version")]
+    pub schema_version: String,
     #[serde(rename = "email")]
     pub email: String,
     /// Validation status
     #[serde(rename = "status")]
     pub status: Status,
-    /// Detailed status reason
-    #[serde(rename = "sub_status", skip_serializing_if = "Option::is_none")]
-    pub sub_status: Option<String>,
     /// Recommended action
     #[serde(rename = "action")]
     pub action: Action,
-    #[serde(rename = "domain", skip_serializing_if = "Option::is_none")]
-    pub domain: Option<String>,
-    #[serde(rename = "mx_found", skip_serializing_if = "Option::is_none")]
-    pub mx_found: Option<bool>,
+    /// Detailed status reason. Omitted when none.
+    #[serde(rename = "sub_status", skip_serializing_if = "Option::is_none")]
+    pub sub_status: Option<SubStatus>,
+    #[serde(rename = "domain")]
+    pub domain: String,
+    /// Whether MX records were found for the domain
+    #[serde(rename = "mx_found")]
+    pub mx_found: bool,
+    /// Primary MX hostname. Omitted when MX not resolved.
+    #[serde(rename = "mx_host", skip_serializing_if = "Option::is_none")]
+    pub mx_host: Option<String>,
+    /// Whether SMTP verification passed. Omitted when SMTP not checked.
     #[serde(rename = "smtp_check", skip_serializing_if = "Option::is_none")]
     pub smtp_check: Option<bool>,
-    #[serde(rename = "disposable", skip_serializing_if = "Option::is_none")]
-    pub disposable: Option<bool>,
-    #[serde(rename = "role_account", skip_serializing_if = "Option::is_none")]
-    pub role_account: Option<bool>,
-    #[serde(rename = "free_provider", skip_serializing_if = "Option::is_none")]
-    pub free_provider: Option<bool>,
+    /// Whether domain is catch-all. Omitted when SMTP not checked.
+    #[serde(rename = "catch_all", skip_serializing_if = "Option::is_none")]
+    pub catch_all: Option<bool>,
+    /// Whether domain is a known disposable email provider
+    #[serde(rename = "disposable")]
+    pub disposable: bool,
+    /// Whether address is a role account (e.g., info@, admin@)
+    #[serde(rename = "role_account")]
+    pub role_account: bool,
+    /// Whether domain is a known free email provider (e.g., gmail.com)
+    #[serde(rename = "free_provider")]
+    pub free_provider: bool,
+    /// Validation depth used for this check
+    #[serde(rename = "depth")]
+    pub depth: Depth,
+    /// ISO 8601 timestamp of validation
+    #[serde(rename = "processed_at")]
+    pub processed_at: String,
+    /// Typo correction suggestion. Omitted when no typo detected.
+    #[serde(rename = "suggested_email", skip_serializing_if = "Option::is_none")]
+    pub suggested_email: Option<String>,
+    /// Suggested retry delay in milliseconds. Present only for retry_later action.
+    #[serde(rename = "retry_after_ms", skip_serializing_if = "Option::is_none")]
+    pub retry_after_ms: Option<i32>,
     #[serde(rename = "suppression_match", skip_serializing_if = "Option::is_none")]
     pub suppression_match: Option<Box<models::ValidationResponseSuppressionMatch>>,
+    #[serde(rename = "policy_applied", skip_serializing_if = "Option::is_none")]
+    pub policy_applied: Option<Box<models::ValidationResponsePolicyApplied>>,
 }
 
 impl ValidationResponse {
-    pub fn new(email: String, status: Status, action: Action) -> ValidationResponse {
+    /// Flat validation response. Conditional fields are omitted (not null) when not applicable.
+    pub fn new(schema_version: String, email: String, status: Status, action: Action, domain: String, mx_found: bool, disposable: bool, role_account: bool, free_provider: bool, depth: Depth, processed_at: String) -> ValidationResponse {
         ValidationResponse {
-            schema_version: None,
+            schema_version,
             email,
             status,
-            sub_status: None,
             action,
-            domain: None,
-            mx_found: None,
+            sub_status: None,
+            domain,
+            mx_found,
+            mx_host: None,
             smtp_check: None,
-            disposable: None,
-            role_account: None,
-            free_provider: None,
+            catch_all: None,
+            disposable,
+            role_account,
+            free_provider,
+            depth,
+            processed_at,
+            suggested_email: None,
+            retry_after_ms: None,
             suppression_match: None,
+            policy_applied: None,
         }
     }
 }
@@ -96,6 +130,50 @@ pub enum Action {
 impl Default for Action {
     fn default() -> Action {
         Self::Accept
+    }
+}
+/// Detailed status reason. Omitted when none.
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
+pub enum SubStatus {
+    #[serde(rename = "format_invalid")]
+    FormatInvalid,
+    #[serde(rename = "mx_missing")]
+    MxMissing,
+    #[serde(rename = "mx_timeout")]
+    MxTimeout,
+    #[serde(rename = "smtp_unreachable")]
+    SmtpUnreachable,
+    #[serde(rename = "smtp_rejected")]
+    SmtpRejected,
+    #[serde(rename = "disposable")]
+    Disposable,
+    #[serde(rename = "role_account")]
+    RoleAccount,
+    #[serde(rename = "greylisted")]
+    Greylisted,
+    #[serde(rename = "catch_all_detected")]
+    CatchAllDetected,
+    #[serde(rename = "suppression_match")]
+    SuppressionMatch,
+}
+
+impl Default for SubStatus {
+    fn default() -> SubStatus {
+        Self::FormatInvalid
+    }
+}
+/// Validation depth used for this check
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
+pub enum Depth {
+    #[serde(rename = "standard")]
+    Standard,
+    #[serde(rename = "enhanced")]
+    Enhanced,
+}
+
+impl Default for Depth {
+    fn default() -> Depth {
+        Self::Standard
     }
 }
 

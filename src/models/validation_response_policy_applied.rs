@@ -11,39 +11,28 @@
 use crate::models;
 use serde::{Deserialize, Serialize};
 
-/// ValidationResponseSuppressionMatch : Present only when email matched a suppression list entry.
+/// ValidationResponsePolicyApplied : Present when a validation policy modified the result.
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
-pub struct ValidationResponseSuppressionMatch {
-    #[serde(rename = "match_type", skip_serializing_if = "Option::is_none")]
-    pub match_type: Option<MatchType>,
-    #[serde(rename = "match_value", skip_serializing_if = "Option::is_none")]
-    pub match_value: Option<String>,
-    #[serde(rename = "reason", skip_serializing_if = "Option::is_none")]
-    pub reason: Option<String>,
+pub struct ValidationResponsePolicyApplied {
+    #[serde(rename = "policy_id", skip_serializing_if = "Option::is_none")]
+    pub policy_id: Option<i32>,
+    #[serde(rename = "policy_name", skip_serializing_if = "Option::is_none")]
+    pub policy_name: Option<String>,
+    #[serde(rename = "rule_id", skip_serializing_if = "Option::is_none")]
+    pub rule_id: Option<i32>,
+    #[serde(rename = "rule_type", skip_serializing_if = "Option::is_none")]
+    pub rule_type: Option<String>,
 }
 
-impl ValidationResponseSuppressionMatch {
-    /// Present only when email matched a suppression list entry.
-    pub fn new() -> ValidationResponseSuppressionMatch {
-        ValidationResponseSuppressionMatch {
-            match_type: None,
-            match_value: None,
-            reason: None,
+impl ValidationResponsePolicyApplied {
+    /// Present when a validation policy modified the result.
+    pub fn new() -> ValidationResponsePolicyApplied {
+        ValidationResponsePolicyApplied {
+            policy_id: None,
+            policy_name: None,
+            rule_id: None,
+            rule_type: None,
         }
-    }
-}
-/// 
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
-pub enum MatchType {
-    #[serde(rename = "email")]
-    Email,
-    #[serde(rename = "domain")]
-    Domain,
-}
-
-impl Default for MatchType {
-    fn default() -> MatchType {
-        Self::Email
     }
 }
 

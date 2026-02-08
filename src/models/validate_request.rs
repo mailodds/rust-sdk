@@ -16,6 +16,9 @@ pub struct ValidateRequest {
     /// Email address to validate
     #[serde(rename = "email")]
     pub email: String,
+    /// Validation depth. 'standard' skips SMTP verification.
+    #[serde(rename = "depth", skip_serializing_if = "Option::is_none")]
+    pub depth: Option<Depth>,
     /// Optional policy ID to use instead of default policy
     #[serde(rename = "policy_id", skip_serializing_if = "Option::is_none")]
     pub policy_id: Option<i32>,
@@ -25,8 +28,23 @@ impl ValidateRequest {
     pub fn new(email: String) -> ValidateRequest {
         ValidateRequest {
             email,
+            depth: None,
             policy_id: None,
         }
+    }
+}
+/// Validation depth. 'standard' skips SMTP verification.
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
+pub enum Depth {
+    #[serde(rename = "standard")]
+    Standard,
+    #[serde(rename = "enhanced")]
+    Enhanced,
+}
+
+impl Default for Depth {
+    fn default() -> Depth {
+        Self::Standard
     }
 }
 

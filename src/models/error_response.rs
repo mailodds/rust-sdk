@@ -19,16 +19,16 @@ pub struct ErrorResponse {
     #[serde(rename = "error")]
     pub error: String,
     /// Human-readable error message
-    #[serde(rename = "message")]
-    pub message: String,
+    #[serde(rename = "message", skip_serializing_if = "Option::is_none")]
+    pub message: Option<String>,
 }
 
 impl ErrorResponse {
-    pub fn new(error: String, message: String) -> ErrorResponse {
+    pub fn new(error: String) -> ErrorResponse {
         ErrorResponse {
             schema_version: None,
             error,
-            message,
+            message: None,
         }
     }
 }

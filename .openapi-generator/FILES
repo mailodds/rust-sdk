@@ -1,5 +1,4 @@
 .gitignore
-.openapi-generator-ignore
 .travis.yml
 Cargo.toml
 README.md
@@ -54,9 +53,13 @@ docs/TelemetrySummaryTotals.md
 docs/TestPolicyRequest.md
 docs/TestPolicyRequestTestResult.md
 docs/UpdatePolicyRequest.md
+docs/ValidateBatch200Response.md
+docs/ValidateBatch200ResponseSummary.md
+docs/ValidateBatchRequest.md
 docs/ValidateRequest.md
 docs/ValidationPoliciesApi.md
 docs/ValidationResponse.md
+docs/ValidationResponsePolicyApplied.md
 docs/ValidationResponseSuppressionMatch.md
 docs/ValidationResult.md
 git_push.sh
@@ -116,7 +119,11 @@ src/models/telemetry_summary_totals.rs
 src/models/test_policy_request.rs
 src/models/test_policy_request_test_result.rs
 src/models/update_policy_request.rs
+src/models/validate_batch_200_response.rs
+src/models/validate_batch_200_response_summary.rs
+src/models/validate_batch_request.rs
 src/models/validate_request.rs
 src/models/validation_response.rs
+src/models/validation_response_policy_applied.rs
 src/models/validation_response_suppression_match.rs
 src/models/validation_result.rs

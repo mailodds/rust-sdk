@@ -1,15 +1,10 @@
 [package]
 name = "mailodds"
-version = "0.1.0"
-authors = ["MailOdds <support@mailodds.com>"]
-description = "Official Rust client for the MailOdds Email Validation API"
-license = "MIT"
+version = "1.0.0"
+authors = ["support@mailodds.com"]
+description = "MailOdds provides email validation services to help maintain clean email lists  and improve deliverability. The API performs multiple validation checks including  format verification, domain validation, MX record checking, and disposable email detection.  ## Authentication  All API requests require authentication using a Bearer token. Include your API key  in the Authorization header:  ``` Authorization: Bearer YOUR_API_KEY ```  API keys can be created in the MailOdds dashboard.  ## Rate Limits  Rate limits vary by plan: - Free: 10 requests/minute - Starter: 60 requests/minute   - Pro: 300 requests/minute - Business: 1000 requests/minute - Enterprise: Custom limits  ## Response Format  All responses include: - `schema_version`: API schema version (currently \"1.0\") - `request_id`: Unique request identifier for debugging  Error responses include: - `error`: Machine-readable error code - `message`: Human-readable error description "
+license = "Proprietary"
 edition = "2021"
-repository = "https://github.com/mailodds/rust-sdk"
-homepage = "https://mailodds.com"
-documentation = "https://mailodds.com/docs"
-keywords = ["email", "validation", "verification", "api"]
-categories = ["api-bindings", "email"]
 
 [dependencies]
 serde = { version = "^1.0", features = ["derive"] }

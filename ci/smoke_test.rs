@@ -40,7 +40,7 @@ async fn main() {
                 let action_str = enum_to_value(&action);
                 if &status_str == exp_status { passed += 1; } else { failed += 1; println!("  FAIL: {domain}.status expected={exp_status} got={status_str}"); }
                 if &action_str == exp_action { passed += 1; } else { failed += 1; println!("  FAIL: {domain}.action expected={exp_action} got={action_str}"); }
-                let sub = resp.sub_status.as_deref().unwrap_or("");
+                let sub = resp.sub_status.as_ref().map(|s| enum_to_value(&format!("{:?}", s))).unwrap_or_default();
                 let exp = exp_sub.unwrap_or("");
                 if sub == exp { passed += 1; } else { failed += 1; println!("  FAIL: {domain}.sub_status expected={exp} got={sub}"); }
             }

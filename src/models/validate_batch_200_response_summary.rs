@@ -11,39 +11,29 @@
 use crate::models;
 use serde::{Deserialize, Serialize};
 
-/// ValidationResponseSuppressionMatch : Present only when email matched a suppression list entry.
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
-pub struct ValidationResponseSuppressionMatch {
-    #[serde(rename = "match_type", skip_serializing_if = "Option::is_none")]
-    pub match_type: Option<MatchType>,
-    #[serde(rename = "match_value", skip_serializing_if = "Option::is_none")]
-    pub match_value: Option<String>,
-    #[serde(rename = "reason", skip_serializing_if = "Option::is_none")]
-    pub reason: Option<String>,
+pub struct ValidateBatch200ResponseSummary {
+    #[serde(rename = "valid", skip_serializing_if = "Option::is_none")]
+    pub valid: Option<i32>,
+    #[serde(rename = "invalid", skip_serializing_if = "Option::is_none")]
+    pub invalid: Option<i32>,
+    #[serde(rename = "catch_all", skip_serializing_if = "Option::is_none")]
+    pub catch_all: Option<i32>,
+    #[serde(rename = "unknown", skip_serializing_if = "Option::is_none")]
+    pub unknown: Option<i32>,
+    #[serde(rename = "do_not_mail", skip_serializing_if = "Option::is_none")]
+    pub do_not_mail: Option<i32>,
 }
 
-impl ValidationResponseSuppressionMatch {
-    /// Present only when email matched a suppression list entry.
-    pub fn new() -> ValidationResponseSuppressionMatch {
-        ValidationResponseSuppressionMatch {
-            match_type: None,
-            match_value: None,
-            reason: None,
+impl ValidateBatch200ResponseSummary {
+    pub fn new() -> ValidateBatch200ResponseSummary {
+        ValidateBatch200ResponseSummary {
+            valid: None,
+            invalid: None,
+            catch_all: None,
+            unknown: None,
+            do_not_mail: None,
         }
-    }
-}
-/// 
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
-pub enum MatchType {
-    #[serde(rename = "email")]
-    Email,
-    #[serde(rename = "domain")]
-    Domain,
-}
-
-impl Default for MatchType {
-    fn default() -> MatchType {
-        Self::Email
     }
 }
 

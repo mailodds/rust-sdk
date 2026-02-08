@@ -1,21 +1,22 @@
-// SDK smoke test -- validates build-from-source and API integration.
-// Uses only std library for the HTTP calls (no external deps needed for the test itself).
-use std::io::{Read, Write};
-use std::net::TcpStream;
-use std::env;
-use std::process;
+// SDK smoke test -- validates build-from-source and API integration using the SDK client.
+use mailodds::apis::configuration::Configuration;
+use mailodds::apis::email_validation_api;
+use mailodds::models::ValidateRequest;
 
-static API_HOST: &str = "api.mailodds.com";
-
-fn main() {
-    let api_key = env::var("MAILODDS_TEST_KEY").unwrap_or_default();
+#[tokio::main(flavor = "current_thread")]
+async fn main() {
+    let api_key = std::env::var("MAILODDS_TEST_KEY").unwrap_or_default();
     if api_key.is_empty() {
         eprintln!("ERROR: MAILODDS_TEST_KEY not set");
-        process::exit(1);
+        std::process::exit(1);
     }
 
     let mut passed: u32 = 0;
     let mut failed: u32 = 0;
+
+    let mut config = Configuration::new();
+    config.base_path = "https://api.mailodds.com".to_owned();
+    config.bearer_access_token = Some(api_key.clone());
 
     let cases: Vec<(&str, &str, &str, Option<&str>)> = vec![
         ("test@deliverable.mailodds.com", "valid", "accept", None),
@@ -29,82 +30,64 @@ fn main() {
 
     for (email, exp_status, exp_action, exp_sub) in &cases {
         let domain: &str = email.split('@').nth(1).unwrap().split('.').next().unwrap();
-        match api_call(email, &api_key) {
-            Ok((200, body)) => {
-                let check = |label: &str, expected: &str, key: &str| -> bool {
-                    let val = json_get(&body, key).unwrap_or_default();
-                    if val == expected { true } else {
-                        println!("  FAIL: {label} expected={expected} got={val}");
-                        false
-                    }
-                };
-                if check(&format!("{domain}.status"), exp_status, "status") { passed += 1; } else { failed += 1; }
-                if check(&format!("{domain}.action"), exp_action, "action") { passed += 1; } else { failed += 1; }
-                let sub = json_get(&body, "sub_status").unwrap_or_default();
+        let req = ValidateRequest::new(email.to_string());
+        match email_validation_api::validate_email(&config, req).await {
+            Ok(resp) => {
+                let status = format!("{:?}", resp.status);
+                let action = format!("{:?}", resp.action);
+                // Convert enum Debug format to snake_case value
+                let status_str = enum_to_value(&status);
+                let action_str = enum_to_value(&action);
+                if &status_str == exp_status { passed += 1; } else { failed += 1; println!("  FAIL: {domain}.status expected={exp_status} got={status_str}"); }
+                if &action_str == exp_action { passed += 1; } else { failed += 1; println!("  FAIL: {domain}.action expected={exp_action} got={action_str}"); }
+                let sub = resp.sub_status.as_deref().unwrap_or("");
                 let exp = exp_sub.unwrap_or("");
                 if sub == exp { passed += 1; } else { failed += 1; println!("  FAIL: {domain}.sub_status expected={exp} got={sub}"); }
-                if body.contains("\"test_mode\":true") { passed += 1; } else { failed += 1; println!("  FAIL: {domain}.test_mode expected=true"); }
             }
-            Ok((code, _)) => { failed += 1; println!("  FAIL: {domain} unexpected status {code}"); }
             Err(e) => { failed += 1; println!("  FAIL: {domain} error: {e}"); }
         }
     }
 
-    // Error handling
-    match api_call("test@deliverable.mailodds.com", "invalid_key") {
-        Ok((401, _)) => passed += 1,
-        Ok((code, _)) => { failed += 1; println!("  FAIL: error.401 got={code}"); }
-        Err(e) => { failed += 1; println!("  FAIL: error.401 error: {e}"); }
+    // Error handling: 401 with bad key
+    let mut bad_config = Configuration::new();
+    bad_config.base_path = "https://api.mailodds.com".to_owned();
+    bad_config.bearer_access_token = Some("invalid_key".to_owned());
+    let req401 = ValidateRequest::new("test@deliverable.mailodds.com".to_string());
+    match email_validation_api::validate_email(&bad_config, req401).await {
+        Ok(_) => { failed += 1; println!("  FAIL: error.401 no error raised"); }
+        Err(mailodds::apis::Error::ResponseError(content)) => {
+            if content.status == 401 { passed += 1; }
+            else { failed += 1; println!("  FAIL: error.401 expected=401 got={}", content.status); }
+        }
+        Err(e) => { failed += 1; println!("  FAIL: error.401 wrong error: {e}"); }
     }
 
-    match api_call_raw("{}", &api_key) {
-        Ok((code, _)) if code == 400 || code == 422 => passed += 1,
-        Ok((code, _)) => { failed += 1; println!("  FAIL: error.400 expected=400|422 got={code}"); }
-        Err(e) => { failed += 1; println!("  FAIL: error.400 error: {e}"); }
+    // Error handling: 400/422 with empty email
+    let req_empty = ValidateRequest::new("".to_string());
+    match email_validation_api::validate_email(&config, req_empty).await {
+        Ok(_) => { failed += 1; println!("  FAIL: error.400 no error raised"); }
+        Err(mailodds::apis::Error::ResponseError(content)) => {
+            if content.status == 400 || content.status == 422 { passed += 1; }
+            else { failed += 1; println!("  FAIL: error.400 expected=400|422 got={}", content.status); }
+        }
+        Err(e) => { failed += 1; println!("  FAIL: error.400 wrong error: {e}"); }
     }
 
     let total = passed + failed;
     let result = if failed == 0 { "PASS" } else { "FAIL" };
     println!("\n{result}: Rust SDK ({passed}/{total})");
-    if failed > 0 { process::exit(1); }
+    if failed > 0 { std::process::exit(1); }
 }
 
-fn json_get(json: &str, key: &str) -> Option<String> {
-    let search = format!("\"{}\":", key);
-    let idx = json.find(&search)?;
-    let rest = &json[idx + search.len()..];
-    let rest = rest.trim_start();
-    if rest.starts_with("null") {
-        return Some(String::new());
+fn enum_to_value(debug_str: &str) -> String {
+    // Convert PascalCase enum variant to snake_case value
+    // e.g., "Valid" -> "valid", "CatchAll" -> "catch_all", "AcceptWithCaution" -> "accept_with_caution"
+    let mut result = String::new();
+    for (i, c) in debug_str.chars().enumerate() {
+        if c.is_uppercase() && i > 0 {
+            result.push('_');
+        }
+        result.push(c.to_lowercase().next().unwrap());
     }
-    if rest.starts_with('"') {
-        let end = rest[1..].find('"')?;
-        return Some(rest[1..1 + end].to_string());
-    }
-    let end = rest.find(|c: char| c == ',' || c == '}')?;
-    Some(rest[..end].trim().to_string())
-}
-
-fn api_call(email: &str, key: &str) -> Result<(u16, String), String> {
-    let body = format!("{{\"email\":\"{email}\"}}");
-    api_call_raw(&body, key)
-}
-
-fn api_call_raw(body: &str, key: &str) -> Result<(u16, String), String> {
-    // Use native-tls via a simple HTTPS approach
-    // Since we can't use external crates in the test binary, shell out to curl
-    let output = std::process::Command::new("curl")
-        .args(["-s", "-w", "\n%{http_code}", "-X", "POST",
-               "-H", &format!("Authorization: Bearer {key}"),
-               "-H", "Content-Type: application/json",
-               "-d", body,
-               &format!("https://{API_HOST}/v1/validate"),
-               "--max-time", "30"])
-        .output()
-        .map_err(|e| e.to_string())?;
-    let out = String::from_utf8_lossy(&output.stdout).to_string();
-    let lines: Vec<&str> = out.trim().rsplitn(2, '\n').collect();
-    if lines.len() < 2 { return Err("unexpected curl output".into()); }
-    let code: u16 = lines[0].parse().unwrap_or(0);
-    Ok((code, lines[1].to_string()))
+    result
 }

@@ -21,3 +21,8 @@
 #docs/*.md
 # Then explicitly reverse the ignore rule for a single file:
 #!docs/README.md
+
+# Preserve CI smoke tests
+ci/**
+# Preserve GitHub Actions workflows
+.github/**

@@ -18,17 +18,17 @@ async fn main() {
     config.base_path = "https://api.mailodds.com".to_owned();
     config.bearer_access_token = Some(api_key.clone());
 
-    let cases: Vec<(&str, &str, &str, Option<&str>)> = vec![
-        ("test@deliverable.mailodds.com", "valid", "accept", None),
-        ("test@invalid.mailodds.com", "invalid", "reject", Some("smtp_rejected")),
-        ("test@risky.mailodds.com", "catch_all", "accept_with_caution", Some("catch_all_detected")),
-        ("test@disposable.mailodds.com", "do_not_mail", "reject", Some("disposable")),
-        ("test@role.mailodds.com", "do_not_mail", "reject", Some("role_account")),
-        ("test@timeout.mailodds.com", "unknown", "retry_later", Some("smtp_unreachable")),
-        ("test@freeprovider.mailodds.com", "valid", "accept", None),
+    let cases: Vec<(&str, &str, &str, Option<&str>, bool, bool, bool, bool)> = vec![
+        ("test@deliverable.mailodds.com", "valid", "accept", None, false, false, false, true),
+        ("test@invalid.mailodds.com", "invalid", "reject", Some("smtp_rejected"), false, false, false, true),
+        ("test@risky.mailodds.com", "catch_all", "accept_with_caution", Some("catch_all_detected"), false, false, false, true),
+        ("test@disposable.mailodds.com", "do_not_mail", "reject", Some("disposable"), false, true, false, true),
+        ("test@role.mailodds.com", "do_not_mail", "reject", Some("role_account"), false, false, true, true),
+        ("test@timeout.mailodds.com", "unknown", "retry_later", Some("smtp_unreachable"), false, false, false, true),
+        ("test@freeprovider.mailodds.com", "valid", "accept", None, true, false, false, true),
     ];
 
-    for (email, exp_status, exp_action, exp_sub) in &cases {
+    for (email, exp_status, exp_action, exp_sub, exp_free, exp_disp, exp_role, exp_mx) in &cases {
         let domain: &str = email.split('@').nth(1).unwrap().split('.').next().unwrap();
         let req = ValidateRequest::new(email.to_string());
         match email_validation_api::validate_email(&config, req).await {
@@ -43,6 +43,13 @@ async fn main() {
                 let sub = resp.sub_status.as_ref().map(|s| enum_to_value(&format!("{:?}", s))).unwrap_or_default();
                 let exp = exp_sub.unwrap_or("");
                 if sub == exp { passed += 1; } else { failed += 1; println!("  FAIL: {domain}.sub_status expected={exp} got={sub}"); }
+                if resp.free_provider == *exp_free { passed += 1; } else { failed += 1; println!("  FAIL: {domain}.free_provider expected={exp_free} got={}", resp.free_provider); }
+                if resp.disposable == *exp_disp { passed += 1; } else { failed += 1; println!("  FAIL: {domain}.disposable expected={exp_disp} got={}", resp.disposable); }
+                if resp.role_account == *exp_role { passed += 1; } else { failed += 1; println!("  FAIL: {domain}.role_account expected={exp_role} got={}", resp.role_account); }
+                if resp.mx_found == *exp_mx { passed += 1; } else { failed += 1; println!("  FAIL: {domain}.mx_found expected={exp_mx} got={}", resp.mx_found); }
+                let depth_str = enum_to_value(&format!("{:?}", resp.depth));
+                if depth_str == "enhanced" { passed += 1; } else { failed += 1; println!("  FAIL: {domain}.depth expected=enhanced got={depth_str}"); }
+                if !resp.processed_at.is_empty() { passed += 1; } else { failed += 1; println!("  FAIL: {domain}.processed_at is empty"); }
             }
             Err(e) => { failed += 1; println!("  FAIL: {domain} error: {e}"); }
         }

@@ -69,8 +69,25 @@ Class | Method | HTTP request | Description
 *BulkValidationApi* | [**get_job_results**](docs/BulkValidationApi.md#get_job_results) | **GET** /v1/jobs/{job_id}/results | Get job results
 *BulkValidationApi* | [**get_presigned_upload**](docs/BulkValidationApi.md#get_presigned_upload) | **POST** /v1/jobs/upload/presigned | Get S3 presigned upload URL
 *BulkValidationApi* | [**list_jobs**](docs/BulkValidationApi.md#list_jobs) | **GET** /v1/jobs | List validation jobs
+*EmailSendingApi* | [**deliver_batch**](docs/EmailSendingApi.md#deliver_batch) | **POST** /v1/deliver/batch | Send to multiple recipients (max 100)
+*EmailSendingApi* | [**deliver_email**](docs/EmailSendingApi.md#deliver_email) | **POST** /v1/deliver | Send a single email
 *EmailValidationApi* | [**validate_batch**](docs/EmailValidationApi.md#validate_batch) | **POST** /v1/validate/batch | Validate multiple emails (sync)
 *EmailValidationApi* | [**validate_email**](docs/EmailValidationApi.md#validate_email) | **POST** /v1/validate | Validate single email
+*SendingDomainsApi* | [**create_sending_domain**](docs/SendingDomainsApi.md#create_sending_domain) | **POST** /v1/sending-domains | Add a sending domain
+*SendingDomainsApi* | [**delete_sending_domain**](docs/SendingDomainsApi.md#delete_sending_domain) | **DELETE** /v1/sending-domains/{domain_id} | Delete a sending domain
+*SendingDomainsApi* | [**get_sending_domain**](docs/SendingDomainsApi.md#get_sending_domain) | **GET** /v1/sending-domains/{domain_id} | Get a sending domain
+*SendingDomainsApi* | [**get_sending_domain_identity_score**](docs/SendingDomainsApi.md#get_sending_domain_identity_score) | **GET** /v1/sending-domains/{domain_id}/identity-score | Get domain identity score
+*SendingDomainsApi* | [**get_sending_stats**](docs/SendingDomainsApi.md#get_sending_stats) | **GET** /v1/sending-stats | Get sending statistics
+*SendingDomainsApi* | [**list_sending_domains**](docs/SendingDomainsApi.md#list_sending_domains) | **GET** /v1/sending-domains | List sending domains
+*SendingDomainsApi* | [**verify_sending_domain**](docs/SendingDomainsApi.md#verify_sending_domain) | **POST** /v1/sending-domains/{domain_id}/verify | Verify domain DNS records
+*SubscriberListsApi* | [**confirm_subscription**](docs/SubscriberListsApi.md#confirm_subscription) | **GET** /v1/confirm/{token} | Confirm subscription
+*SubscriberListsApi* | [**create_list**](docs/SubscriberListsApi.md#create_list) | **POST** /v1/lists | Create a subscriber list
+*SubscriberListsApi* | [**delete_list**](docs/SubscriberListsApi.md#delete_list) | **DELETE** /v1/lists/{list_id} | Delete a subscriber list
+*SubscriberListsApi* | [**get_list**](docs/SubscriberListsApi.md#get_list) | **GET** /v1/lists/{list_id} | Get a subscriber list
+*SubscriberListsApi* | [**get_lists**](docs/SubscriberListsApi.md#get_lists) | **GET** /v1/lists | List subscriber lists
+*SubscriberListsApi* | [**get_subscribers**](docs/SubscriberListsApi.md#get_subscribers) | **GET** /v1/lists/{list_id}/subscribers | List subscribers
+*SubscriberListsApi* | [**subscribe**](docs/SubscriberListsApi.md#subscribe) | **POST** /v1/subscribe/{list_id} | Subscribe to a list
+*SubscriberListsApi* | [**unsubscribe_subscriber**](docs/SubscriberListsApi.md#unsubscribe_subscriber) | **DELETE** /v1/lists/{list_id}/subscribers/{subscriber_id} | Unsubscribe a subscriber
 *SuppressionListsApi* | [**add_suppression**](docs/SuppressionListsApi.md#add_suppression) | **POST** /v1/suppression | Add suppression entries
 *SuppressionListsApi* | [**check_suppression**](docs/SuppressionListsApi.md#check_suppression) | **POST** /v1/suppression/check | Check suppression status
 *SuppressionListsApi* | [**get_suppression_stats**](docs/SuppressionListsApi.md#get_suppression_stats) | **GET** /v1/suppression/stats | Get suppression statistics
@@ -96,21 +113,43 @@ Class | Method | HTTP request | Description
  - [AddSuppressionRequest](docs/AddSuppressionRequest.md)
  - [AddSuppressionRequestEntriesInner](docs/AddSuppressionRequestEntriesInner.md)
  - [AddSuppressionResponse](docs/AddSuppressionResponse.md)
+ - [BatchDeliverRequest](docs/BatchDeliverRequest.md)
+ - [BatchDeliverRequestStructuredData](docs/BatchDeliverRequestStructuredData.md)
+ - [BatchDeliverResponse](docs/BatchDeliverResponse.md)
+ - [BatchDeliverResponseDelivery](docs/BatchDeliverResponseDelivery.md)
+ - [BatchDeliverResponseRejectedInner](docs/BatchDeliverResponseRejectedInner.md)
  - [CheckSuppressionRequest](docs/CheckSuppressionRequest.md)
+ - [ConfirmSubscription200Response](docs/ConfirmSubscription200Response.md)
  - [CreateJobFromS3Request](docs/CreateJobFromS3Request.md)
  - [CreateJobRequest](docs/CreateJobRequest.md)
+ - [CreateList201Response](docs/CreateList201Response.md)
+ - [CreateListRequest](docs/CreateListRequest.md)
  - [CreatePolicyFromPresetRequest](docs/CreatePolicyFromPresetRequest.md)
  - [CreatePolicyRequest](docs/CreatePolicyRequest.md)
+ - [CreateSendingDomain201Response](docs/CreateSendingDomain201Response.md)
+ - [CreateSendingDomainRequest](docs/CreateSendingDomainRequest.md)
  - [DeleteJob200Response](docs/DeleteJob200Response.md)
  - [DeletePolicy200Response](docs/DeletePolicy200Response.md)
  - [DeletePolicyRule200Response](docs/DeletePolicyRule200Response.md)
+ - [DeliverRequest](docs/DeliverRequest.md)
+ - [DeliverRequestOptions](docs/DeliverRequestOptions.md)
+ - [DeliverRequestStructuredData](docs/DeliverRequestStructuredData.md)
+ - [DeliverRequestToInner](docs/DeliverRequestToInner.md)
+ - [DeliverResponse](docs/DeliverResponse.md)
+ - [DeliverResponseDelivery](docs/DeliverResponseDelivery.md)
  - [ErrorResponse](docs/ErrorResponse.md)
+ - [GetLists200Response](docs/GetLists200Response.md)
  - [GetPresignedUploadRequest](docs/GetPresignedUploadRequest.md)
+ - [GetSendingDomainIdentityScore200Response](docs/GetSendingDomainIdentityScore200Response.md)
+ - [GetSendingStats200Response](docs/GetSendingStats200Response.md)
+ - [GetSendingStats200ResponseStats](docs/GetSendingStats200ResponseStats.md)
+ - [GetSubscribers200Response](docs/GetSubscribers200Response.md)
  - [HealthCheck200Response](docs/HealthCheck200Response.md)
  - [Job](docs/Job.md)
  - [JobListResponse](docs/JobListResponse.md)
  - [JobResponse](docs/JobResponse.md)
  - [JobSummary](docs/JobSummary.md)
+ - [ListSendingDomains200Response](docs/ListSendingDomains200Response.md)
  - [Pagination](docs/Pagination.md)
  - [Policy](docs/Policy.md)
  - [PolicyListResponse](docs/PolicyListResponse.md)
@@ -126,6 +165,16 @@ Class | Method | HTTP request | Description
  - [RemoveSuppression200Response](docs/RemoveSuppression200Response.md)
  - [RemoveSuppressionRequest](docs/RemoveSuppressionRequest.md)
  - [ResultsResponse](docs/ResultsResponse.md)
+ - [SendingDomain](docs/SendingDomain.md)
+ - [SendingDomainDnsRecords](docs/SendingDomainDnsRecords.md)
+ - [SendingDomainDnsRecordsNs](docs/SendingDomainDnsRecordsNs.md)
+ - [SendingDomainIdentityScore](docs/SendingDomainIdentityScore.md)
+ - [SendingDomainIdentityScoreChecks](docs/SendingDomainIdentityScoreChecks.md)
+ - [SendingDomainIdentityScoreChecksDkim](docs/SendingDomainIdentityScoreChecksDkim.md)
+ - [SendingDomainIdentityScoreChecksDmarc](docs/SendingDomainIdentityScoreChecksDmarc.md)
+ - [SubscribeRequest](docs/SubscribeRequest.md)
+ - [Subscriber](docs/Subscriber.md)
+ - [SubscriberList](docs/SubscriberList.md)
  - [SuppressionCheckResponse](docs/SuppressionCheckResponse.md)
  - [SuppressionEntry](docs/SuppressionEntry.md)
  - [SuppressionListResponse](docs/SuppressionListResponse.md)
@@ -138,6 +187,7 @@ Class | Method | HTTP request | Description
  - [TelemetrySummaryTotals](docs/TelemetrySummaryTotals.md)
  - [TestPolicyRequest](docs/TestPolicyRequest.md)
  - [TestPolicyRequestTestResult](docs/TestPolicyRequestTestResult.md)
+ - [UnsubscribeSubscriber200Response](docs/UnsubscribeSubscriber200Response.md)
  - [UpdatePolicyRequest](docs/UpdatePolicyRequest.md)
  - [ValidateBatch200Response](docs/ValidateBatch200Response.md)
  - [ValidateBatch200ResponseSummary](docs/ValidateBatch200ResponseSummary.md)

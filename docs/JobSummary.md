@@ -6,6 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **valid** | Option<**i32**> |  | [optional]
 **invalid** | Option<**i32**> |  | [optional]
+**catch_all** | Option<**i32**> |  | [optional]
 **do_not_mail** | Option<**i32**> |  | [optional]
 **unknown** | Option<**i32**> |  | [optional]
 **cancelled_pending** | Option<**i32**> |  | [optional]

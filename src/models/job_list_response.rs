@@ -15,8 +15,15 @@ use serde::{Deserialize, Serialize};
 pub struct JobListResponse {
     #[serde(rename = "schema_version", skip_serializing_if = "Option::is_none")]
     pub schema_version: Option<String>,
-    #[serde(rename = "jobs", skip_serializing_if = "Option::is_none")]
+    /// Unique request identifier
+    #[serde(rename = "request_id", skip_serializing_if = "Option::is_none")]
+    pub request_id: Option<String>,
+    #[serde(rename = "data", skip_serializing_if = "Option::is_none")]
     pub jobs: Option<Vec<models::Job>>,
+    #[serde(rename = "next_cursor", skip_serializing_if = "Option::is_none")]
+    pub next_cursor: Option<String>,
+    #[serde(rename = "has_more", skip_serializing_if = "Option::is_none")]
+    pub has_more: Option<bool>,
     #[serde(rename = "pagination", skip_serializing_if = "Option::is_none")]
     pub pagination: Option<Box<models::Pagination>>,
 }
@@ -25,7 +32,10 @@ impl JobListResponse {
     pub fn new() -> JobListResponse {
         JobListResponse {
             schema_version: None,
+            request_id: None,
             jobs: None,
+            next_cursor: None,
+            has_more: None,
             pagination: None,
         }
     }

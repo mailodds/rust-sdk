@@ -15,6 +15,9 @@ use serde::{Deserialize, Serialize};
 pub struct RemoveSuppression200Response {
     #[serde(rename = "schema_version", skip_serializing_if = "Option::is_none")]
     pub schema_version: Option<String>,
+    /// Unique request identifier
+    #[serde(rename = "request_id", skip_serializing_if = "Option::is_none")]
+    pub request_id: Option<String>,
     #[serde(rename = "removed", skip_serializing_if = "Option::is_none")]
     pub removed: Option<i32>,
 }
@@ -23,6 +26,7 @@ impl RemoveSuppression200Response {
     pub fn new() -> RemoveSuppression200Response {
         RemoveSuppression200Response {
             schema_version: None,
+            request_id: None,
             removed: None,
         }
     }

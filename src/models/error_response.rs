@@ -15,6 +15,9 @@ use serde::{Deserialize, Serialize};
 pub struct ErrorResponse {
     #[serde(rename = "schema_version", skip_serializing_if = "Option::is_none")]
     pub schema_version: Option<String>,
+    /// Unique request identifier
+    #[serde(rename = "request_id", skip_serializing_if = "Option::is_none")]
+    pub request_id: Option<String>,
     /// Machine-readable error code
     #[serde(rename = "error")]
     pub error: String,
@@ -27,6 +30,7 @@ impl ErrorResponse {
     pub fn new(error: String) -> ErrorResponse {
         ErrorResponse {
             schema_version: None,
+            request_id: None,
             error,
             message: None,
         }

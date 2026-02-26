@@ -16,6 +16,9 @@ use serde::{Deserialize, Serialize};
 pub struct ValidationResponse {
     #[serde(rename = "schema_version")]
     pub schema_version: String,
+    /// Unique request identifier
+    #[serde(rename = "request_id", skip_serializing_if = "Option::is_none")]
+    pub request_id: Option<String>,
     #[serde(rename = "email")]
     pub email: String,
     /// Validation status
@@ -62,6 +65,18 @@ pub struct ValidationResponse {
     /// Suggested retry delay in milliseconds. Present only for retry_later action.
     #[serde(rename = "retry_after_ms", skip_serializing_if = "Option::is_none")]
     pub retry_after_ms: Option<i32>,
+    /// Whether the domain has an SPF record. Omitted for standard depth.
+    #[serde(rename = "has_spf", skip_serializing_if = "Option::is_none")]
+    pub has_spf: Option<bool>,
+    /// Whether the domain has a DMARC record. Omitted for standard depth.
+    #[serde(rename = "has_dmarc", skip_serializing_if = "Option::is_none")]
+    pub has_dmarc: Option<bool>,
+    /// The domain's DMARC policy. Omitted when no DMARC record found.
+    #[serde(rename = "dmarc_policy", skip_serializing_if = "Option::is_none")]
+    pub dmarc_policy: Option<DmarcPolicy>,
+    /// Whether the domain's MX IP is on a DNS blocklist (Spamhaus ZEN). Omitted for standard depth.
+    #[serde(rename = "dnsbl_listed", skip_serializing_if = "Option::is_none")]
+    pub dnsbl_listed: Option<bool>,
     #[serde(rename = "suppression_match", skip_serializing_if = "Option::is_none")]
     pub suppression_match: Option<Box<models::ValidationResponseSuppressionMatch>>,
     #[serde(rename = "policy_applied", skip_serializing_if = "Option::is_none")]
@@ -73,6 +88,7 @@ impl ValidationResponse {
     pub fn new(schema_version: String, email: String, status: Status, action: Action, domain: String, mx_found: bool, disposable: bool, role_account: bool, free_provider: bool, depth: Depth, processed_at: String) -> ValidationResponse {
         ValidationResponse {
             schema_version,
+            request_id: None,
             email,
             status,
             action,
@@ -89,6 +105,10 @@ impl ValidationResponse {
             processed_at,
             suggested_email: None,
             retry_after_ms: None,
+            has_spf: None,
+            has_dmarc: None,
+            dmarc_policy: None,
+            dnsbl_listed: None,
             suppression_match: None,
             policy_applied: None,
         }
@@ -153,8 +173,14 @@ pub enum SubStatus {
     Greylisted,
     #[serde(rename = "catch_all_detected")]
     CatchAllDetected,
+    #[serde(rename = "domain_not_found")]
+    DomainNotFound,
     #[serde(rename = "suppression_match")]
     SuppressionMatch,
+    #[serde(rename = "restricted_military")]
+    RestrictedMilitary,
+    #[serde(rename = "restricted_sanctioned")]
+    RestrictedSanctioned,
 }
 
 impl Default for SubStatus {
@@ -174,6 +200,22 @@ pub enum Depth {
 impl Default for Depth {
     fn default() -> Depth {
         Self::Standard
+    }
+}
+/// The domain's DMARC policy. Omitted when no DMARC record found.
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
+pub enum DmarcPolicy {
+    #[serde(rename = "none")]
+    None,
+    #[serde(rename = "quarantine")]
+    Quarantine,
+    #[serde(rename = "reject")]
+    Reject,
+}
+
+impl Default for DmarcPolicy {
+    fn default() -> DmarcPolicy {
+        Self::None
     }
 }
 

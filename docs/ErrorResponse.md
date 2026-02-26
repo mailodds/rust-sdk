@@ -5,6 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **schema_version** | Option<**String**> |  | [optional]
+**request_id** | Option<**String**> | Unique request identifier | [optional]
 **error** | **String** | Machine-readable error code | 
 **message** | Option<**String**> | Human-readable error message | [optional]
 

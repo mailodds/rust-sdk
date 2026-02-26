@@ -5,6 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **schema_version** | Option<**String**> |  | [optional]
+**request_id** | Option<**String**> | Unique request identifier | [optional]
 **total** | Option<**i32**> |  | [optional]
 **summary** | Option<[**models::ValidateBatch200ResponseSummary**](ValidateBatch200ResponseSummary.md)> |  | [optional]
 **results** | Option<[**Vec<models::ValidationResponse>**](ValidationResponse.md)> |  | [optional]

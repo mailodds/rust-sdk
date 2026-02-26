@@ -15,6 +15,9 @@ use serde::{Deserialize, Serialize};
 pub struct ValidateBatch200Response {
     #[serde(rename = "schema_version", skip_serializing_if = "Option::is_none")]
     pub schema_version: Option<String>,
+    /// Unique request identifier
+    #[serde(rename = "request_id", skip_serializing_if = "Option::is_none")]
+    pub request_id: Option<String>,
     #[serde(rename = "total", skip_serializing_if = "Option::is_none")]
     pub total: Option<i32>,
     #[serde(rename = "summary", skip_serializing_if = "Option::is_none")]
@@ -27,6 +30,7 @@ impl ValidateBatch200Response {
     pub fn new() -> ValidateBatch200Response {
         ValidateBatch200Response {
             schema_version: None,
+            request_id: None,
             total: None,
             summary: None,
             results: None,

@@ -15,6 +15,9 @@ use serde::{Deserialize, Serialize};
 pub struct JobResponse {
     #[serde(rename = "schema_version", skip_serializing_if = "Option::is_none")]
     pub schema_version: Option<String>,
+    /// Unique request identifier
+    #[serde(rename = "request_id", skip_serializing_if = "Option::is_none")]
+    pub request_id: Option<String>,
     #[serde(rename = "job", skip_serializing_if = "Option::is_none")]
     pub job: Option<Box<models::Job>>,
 }
@@ -23,6 +26,7 @@ impl JobResponse {
     pub fn new() -> JobResponse {
         JobResponse {
             schema_version: None,
+            request_id: None,
             job: None,
         }
     }

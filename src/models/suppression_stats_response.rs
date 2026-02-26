@@ -15,6 +15,9 @@ use serde::{Deserialize, Serialize};
 pub struct SuppressionStatsResponse {
     #[serde(rename = "schema_version", skip_serializing_if = "Option::is_none")]
     pub schema_version: Option<String>,
+    /// Unique request identifier
+    #[serde(rename = "request_id", skip_serializing_if = "Option::is_none")]
+    pub request_id: Option<String>,
     #[serde(rename = "total", skip_serializing_if = "Option::is_none")]
     pub total: Option<i32>,
     #[serde(rename = "by_type", skip_serializing_if = "Option::is_none")]
@@ -25,6 +28,7 @@ impl SuppressionStatsResponse {
     pub fn new() -> SuppressionStatsResponse {
         SuppressionStatsResponse {
             schema_version: None,
+            request_id: None,
             total: None,
             by_type: None,
         }

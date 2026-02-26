@@ -16,11 +16,11 @@ pub struct ValidationResult {
     #[serde(rename = "email", skip_serializing_if = "Option::is_none")]
     pub email: Option<String>,
     #[serde(rename = "status", skip_serializing_if = "Option::is_none")]
-    pub status: Option<String>,
+    pub status: Option<Status>,
     #[serde(rename = "sub_status", skip_serializing_if = "Option::is_none")]
     pub sub_status: Option<String>,
     #[serde(rename = "action", skip_serializing_if = "Option::is_none")]
-    pub action: Option<String>,
+    pub action: Option<Action>,
     #[serde(rename = "processed_at", skip_serializing_if = "Option::is_none")]
     pub processed_at: Option<String>,
 }
@@ -34,6 +34,44 @@ impl ValidationResult {
             action: None,
             processed_at: None,
         }
+    }
+}
+/// 
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
+pub enum Status {
+    #[serde(rename = "valid")]
+    Valid,
+    #[serde(rename = "invalid")]
+    Invalid,
+    #[serde(rename = "catch_all")]
+    CatchAll,
+    #[serde(rename = "do_not_mail")]
+    DoNotMail,
+    #[serde(rename = "unknown")]
+    Unknown,
+}
+
+impl Default for Status {
+    fn default() -> Status {
+        Self::Valid
+    }
+}
+/// 
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
+pub enum Action {
+    #[serde(rename = "accept")]
+    Accept,
+    #[serde(rename = "accept_with_caution")]
+    AcceptWithCaution,
+    #[serde(rename = "reject")]
+    Reject,
+    #[serde(rename = "retry_later")]
+    RetryLater,
+}
+
+impl Default for Action {
+    fn default() -> Action {
+        Self::Accept
     }
 }
 

@@ -17,6 +17,8 @@ pub struct JobSummary {
     pub valid: Option<i32>,
     #[serde(rename = "invalid", skip_serializing_if = "Option::is_none")]
     pub invalid: Option<i32>,
+    #[serde(rename = "catch_all", skip_serializing_if = "Option::is_none")]
+    pub catch_all: Option<i32>,
     #[serde(rename = "do_not_mail", skip_serializing_if = "Option::is_none")]
     pub do_not_mail: Option<i32>,
     #[serde(rename = "unknown", skip_serializing_if = "Option::is_none")]
@@ -30,6 +32,7 @@ impl JobSummary {
         JobSummary {
             valid: None,
             invalid: None,
+            catch_all: None,
             do_not_mail: None,
             unknown: None,
             cancelled_pending: None,

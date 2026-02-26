@@ -5,6 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **schema_version** | Option<**String**> |  | [optional]
+**request_id** | Option<**String**> | Unique request identifier | [optional]
 **original** | Option<**serde_json::Value**> | Original validation result before policy | [optional]
 **modified** | Option<**serde_json::Value**> | Result after policy applied | [optional]
 **matched_rule** | Option<**serde_json::Value**> | The rule that matched, or null if none matched | [optional]

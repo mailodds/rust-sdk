@@ -15,6 +15,9 @@ use serde::{Deserialize, Serialize};
 pub struct PolicyListResponse {
     #[serde(rename = "schema_version", skip_serializing_if = "Option::is_none")]
     pub schema_version: Option<String>,
+    /// Unique request identifier
+    #[serde(rename = "request_id", skip_serializing_if = "Option::is_none")]
+    pub request_id: Option<String>,
     #[serde(rename = "policies", skip_serializing_if = "Option::is_none")]
     pub policies: Option<Vec<models::Policy>>,
     #[serde(rename = "limits", skip_serializing_if = "Option::is_none")]
@@ -25,6 +28,7 @@ impl PolicyListResponse {
     pub fn new() -> PolicyListResponse {
         PolicyListResponse {
             schema_version: None,
+            request_id: None,
             policies: None,
             limits: None,
         }

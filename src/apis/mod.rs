@@ -112,7 +112,10 @@ impl From<&str> for ContentType {
 }
 
 pub mod bulk_validation_api;
+pub mod email_sending_api;
 pub mod email_validation_api;
+pub mod sending_domains_api;
+pub mod subscriber_lists_api;
 pub mod suppression_lists_api;
 pub mod system_api;
 pub mod validation_policies_api;

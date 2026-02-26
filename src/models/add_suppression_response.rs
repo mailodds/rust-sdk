@@ -15,18 +15,32 @@ use serde::{Deserialize, Serialize};
 pub struct AddSuppressionResponse {
     #[serde(rename = "schema_version", skip_serializing_if = "Option::is_none")]
     pub schema_version: Option<String>,
+    /// Unique request identifier
+    #[serde(rename = "request_id", skip_serializing_if = "Option::is_none")]
+    pub request_id: Option<String>,
+    /// Number of entries successfully added
     #[serde(rename = "added", skip_serializing_if = "Option::is_none")]
     pub added: Option<i32>,
-    #[serde(rename = "skipped", skip_serializing_if = "Option::is_none")]
-    pub skipped: Option<i32>,
+    /// Number of duplicate entries skipped
+    #[serde(rename = "duplicates", skip_serializing_if = "Option::is_none")]
+    pub duplicates: Option<i32>,
+    /// Number of invalid entries rejected
+    #[serde(rename = "invalid", skip_serializing_if = "Option::is_none")]
+    pub invalid: Option<i32>,
+    /// Total entries in the request
+    #[serde(rename = "total", skip_serializing_if = "Option::is_none")]
+    pub total: Option<i32>,
 }
 
 impl AddSuppressionResponse {
     pub fn new() -> AddSuppressionResponse {
         AddSuppressionResponse {
             schema_version: None,
+            request_id: None,
             added: None,
-            skipped: None,
+            duplicates: None,
+            invalid: None,
+            total: None,
         }
     }
 }

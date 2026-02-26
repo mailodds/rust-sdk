@@ -5,6 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **schema_version** | Option<**String**> |  | [optional]
+**request_id** | Option<**String**> | Unique request identifier | [optional]
 **email** | Option<**String**> |  | [optional]
 **suppressed** | Option<**bool**> |  | [optional]
 **match_type** | Option<**MatchType**> |  (enum: email, domain) | [optional]

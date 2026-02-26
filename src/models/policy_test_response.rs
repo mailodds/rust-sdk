@@ -15,6 +15,9 @@ use serde::{Deserialize, Serialize};
 pub struct PolicyTestResponse {
     #[serde(rename = "schema_version", skip_serializing_if = "Option::is_none")]
     pub schema_version: Option<String>,
+    /// Unique request identifier
+    #[serde(rename = "request_id", skip_serializing_if = "Option::is_none")]
+    pub request_id: Option<String>,
     /// Original validation result before policy
     #[serde(rename = "original", skip_serializing_if = "Option::is_none")]
     pub original: Option<serde_json::Value>,
@@ -32,6 +35,7 @@ impl PolicyTestResponse {
     pub fn new() -> PolicyTestResponse {
         PolicyTestResponse {
             schema_version: None,
+            request_id: None,
             original: None,
             modified: None,
             matched_rule: None,

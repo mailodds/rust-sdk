@@ -5,6 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **schema_version** | Option<**String**> |  | [optional]
+**request_id** | Option<**String**> | Unique request identifier | [optional]
 **jobs** | Option<[**Vec<models::Job>**](Job.md)> |  | [optional]
 **pagination** | Option<[**models::Pagination**](Pagination.md)> |  | [optional]
 

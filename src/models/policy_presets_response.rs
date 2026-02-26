@@ -15,6 +15,9 @@ use serde::{Deserialize, Serialize};
 pub struct PolicyPresetsResponse {
     #[serde(rename = "schema_version", skip_serializing_if = "Option::is_none")]
     pub schema_version: Option<String>,
+    /// Unique request identifier
+    #[serde(rename = "request_id", skip_serializing_if = "Option::is_none")]
+    pub request_id: Option<String>,
     #[serde(rename = "presets", skip_serializing_if = "Option::is_none")]
     pub presets: Option<Vec<models::PolicyPresetsResponsePresetsInner>>,
 }
@@ -23,6 +26,7 @@ impl PolicyPresetsResponse {
     pub fn new() -> PolicyPresetsResponse {
         PolicyPresetsResponse {
             schema_version: None,
+            request_id: None,
             presets: None,
         }
     }

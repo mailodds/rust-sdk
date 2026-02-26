@@ -15,6 +15,9 @@ use serde::{Deserialize, Serialize};
 pub struct SuppressionCheckResponse {
     #[serde(rename = "schema_version", skip_serializing_if = "Option::is_none")]
     pub schema_version: Option<String>,
+    /// Unique request identifier
+    #[serde(rename = "request_id", skip_serializing_if = "Option::is_none")]
+    pub request_id: Option<String>,
     #[serde(rename = "email", skip_serializing_if = "Option::is_none")]
     pub email: Option<String>,
     #[serde(rename = "suppressed", skip_serializing_if = "Option::is_none")]
@@ -29,6 +32,7 @@ impl SuppressionCheckResponse {
     pub fn new() -> SuppressionCheckResponse {
         SuppressionCheckResponse {
             schema_version: None,
+            request_id: None,
             email: None,
             suppressed: None,
             match_type: None,

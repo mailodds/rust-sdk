@@ -15,6 +15,9 @@ use serde::{Deserialize, Serialize};
 pub struct SuppressionListResponse {
     #[serde(rename = "schema_version", skip_serializing_if = "Option::is_none")]
     pub schema_version: Option<String>,
+    /// Unique request identifier
+    #[serde(rename = "request_id", skip_serializing_if = "Option::is_none")]
+    pub request_id: Option<String>,
     #[serde(rename = "entries", skip_serializing_if = "Option::is_none")]
     pub entries: Option<Vec<models::SuppressionEntry>>,
     #[serde(rename = "pagination", skip_serializing_if = "Option::is_none")]
@@ -25,6 +28,7 @@ impl SuppressionListResponse {
     pub fn new() -> SuppressionListResponse {
         SuppressionListResponse {
             schema_version: None,
+            request_id: None,
             entries: None,
             pagination: None,
         }

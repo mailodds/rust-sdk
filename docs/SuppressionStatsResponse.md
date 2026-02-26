@@ -5,6 +5,7 @@
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **schema_version** | Option<**String**> |  | [optional]
+**request_id** | Option<**String**> | Unique request identifier | [optional]
 **total** | Option<**i32**> |  | [optional]
 **by_type** | Option<[**models::SuppressionStatsResponseByType**](SuppressionStatsResponseByType.md)> |  | [optional]
 

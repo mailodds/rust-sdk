@@ -102,9 +102,9 @@ async fn main() {
     match bulk_validation_api::create_job(&config, create_req).await {
         Ok(resp) => {
             let job = resp.job.as_ref().expect("bulk.create missing job");
-            let job_id = job.id.as_ref().expect("bulk.create missing job.id");
+            let job_id = &job.id;
             if job_id.starts_with("job_") { passed += 1; } else { failed += 1; println!("  FAIL: bulk.create job_id prefix expected=job_ got={job_id}"); }
-            let status_str = job.status.as_ref().map(|s| enum_to_value(&format!("{:?}", s))).unwrap_or_default();
+            let status_str = enum_to_value(&format!("{:?}", job.status));
             if status_str == "pending" || status_str == "processing" || status_str == "completed" {
                 passed += 1;
             } else {
@@ -115,7 +115,7 @@ async fn main() {
             match bulk_validation_api::get_job(&config, job_id).await {
                 Ok(get_resp) => {
                     let get_job = get_resp.job.as_ref().expect("bulk.get missing job");
-                    let get_id = get_job.id.as_ref().expect("bulk.get missing job.id");
+                    let get_id = &get_job.id;
                     if get_id == job_id { passed += 1; } else { failed += 1; println!("  FAIL: bulk.get job_id mismatch expected={job_id} got={get_id}"); }
                 }
                 Err(e) => { failed += 1; println!("  FAIL: bulk.get error: {e}"); }
@@ -124,7 +124,7 @@ async fn main() {
             // List jobs
             match bulk_validation_api::list_jobs(&config, None, None, None).await {
                 Ok(list_resp) => {
-                    let jobs = list_resp.jobs.unwrap_or_default();
+                    let jobs = list_resp.data.unwrap_or_default();
                     if !jobs.is_empty() { passed += 1; } else { failed += 1; println!("  FAIL: bulk.list returned empty jobs"); }
                 }
                 Err(e) => { failed += 1; println!("  FAIL: bulk.list error: {e}"); }

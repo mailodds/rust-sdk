@@ -1,7 +1,7 @@
 /*
  * MailOdds Email Validation API
  *
- * MailOdds provides email validation services to help maintain clean email lists  and improve deliverability. The API performs multiple validation checks including  format verification, domain validation, MX record checking, and disposable email detection.  ## Authentication  All API requests require authentication using a Bearer token. Include your API key  in the Authorization header:  ``` Authorization: Bearer YOUR_API_KEY ```  API keys can be created in the MailOdds dashboard.  ## Rate Limits  Rate limits vary by plan: - Free: 10 requests/minute - Starter: 60 requests/minute   - Pro: 300 requests/minute - Business: 1000 requests/minute - Enterprise: Custom limits  ## Response Format  All responses include: - `schema_version`: API schema version (currently \"1.0\") - `request_id`: Unique request identifier for debugging  Error responses include: - `error`: Machine-readable error code - `message`: Human-readable error description 
+ * MailOdds provides email validation services to help maintain clean email lists  and improve deliverability. The API performs multiple validation checks including  format verification, domain validation, MX record checking, and disposable email detection.  ## Authentication  All API requests require authentication using a Bearer token. Include your API key  in the Authorization header:  ``` Authorization: Bearer YOUR_API_KEY ```  API keys can be created in the MailOdds dashboard.  ## Rate Limits  Rate limits vary by plan: - Free: 10 requests/minute - Starter: 60 requests/minute   - Pro: 300 requests/minute - Business: 1000 requests/minute - Enterprise: Custom limits  ## Response Format  All responses include: - `schema_version`: API schema version (currently \"1.0\") - `request_id`: Unique request identifier for debugging  Error responses include: - `error`: Machine-readable error code - `message`: Human-readable error description  ## Webhooks  MailOdds can send webhook notifications for job completion and email delivery events. Configure webhooks in the dashboard or per-job via the `webhook_url` field.  ### Event Types  | Event | Description | |-------|-------------| | `job.completed` | Validation job finished processing | | `job.failed` | Validation job failed | | `message.queued` | Email queued for delivery | | `message.delivered` | Email delivered to recipient | | `message.bounced` | Email bounced | | `message.deferred` | Email delivery deferred | | `message.failed` | Email delivery failed | | `message.opened` | Recipient opened the email | | `message.clicked` | Recipient clicked a link |  ### Payload Format  ```json {   \"event\": \"job.completed\",   \"job\": { ... },   \"timestamp\": \"2026-01-15T10:30:00Z\" } ```  ### Webhook Signing  If a webhook secret is configured, each request includes an `X-MailOdds-Signature` header containing an HMAC-SHA256 hex digest of the request body.  **Verification pseudocode:** ``` expected = HMAC-SHA256(webhook_secret, request_body) valid = constant_time_compare(request.headers[\"X-MailOdds-Signature\"], hex(expected)) ```  The payload is serialized with compact JSON (no extra whitespace, sorted keys) before signing.  ### Headers  All webhook requests include: - `Content-Type: application/json` - `User-Agent: MailOdds-Webhook/1.0` - `X-MailOdds-Event: {event_type}` - `X-Request-Id: {uuid}` - `X-MailOdds-Signature: {hmac}` (when secret is configured)  ### Retry Policy  Failed deliveries (non-2xx response or timeout) are retried up to 3 times with exponential backoff (10s, 60s, 300s). 
  *
  * The version of the OpenAPI document: 1.0.0
  * Contact: support@mailodds.com
@@ -454,20 +454,20 @@ pub async fn get_presigned_upload(configuration: &configuration::Configuration, 
 }
 
 /// List all validation jobs for the authenticated account.
-pub async fn list_jobs(configuration: &configuration::Configuration, page: Option<i32>, per_page: Option<i32>, status: Option<&str>) -> Result<models::JobListResponse, Error<ListJobsError>> {
+pub async fn list_jobs(configuration: &configuration::Configuration, cursor: Option<&str>, limit: Option<i32>, status: Option<&str>) -> Result<models::JobListResponse, Error<ListJobsError>> {
     // add a prefix to parameters to efficiently prevent name collisions
-    let p_query_page = page;
-    let p_query_per_page = per_page;
+    let p_query_cursor = cursor;
+    let p_query_limit = limit;
     let p_query_status = status;
 
     let uri_str = format!("{}/v1/jobs", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
 
-    if let Some(ref param_value) = p_query_page {
-        req_builder = req_builder.query(&[("page", &param_value.to_string())]);
+    if let Some(ref param_value) = p_query_cursor {
+        req_builder = req_builder.query(&[("cursor", &param_value.to_string())]);
     }
-    if let Some(ref param_value) = p_query_per_page {
-        req_builder = req_builder.query(&[("per_page", &param_value.to_string())]);
+    if let Some(ref param_value) = p_query_limit {
+        req_builder = req_builder.query(&[("limit", &param_value.to_string())]);
     }
     if let Some(ref param_value) = p_query_status {
         req_builder = req_builder.query(&[("status", &param_value.to_string())]);

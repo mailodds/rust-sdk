@@ -1,7 +1,7 @@
 /*
  * MailOdds Email Validation API
  *
- * MailOdds provides email validation services to help maintain clean email lists  and improve deliverability. The API performs multiple validation checks including  format verification, domain validation, MX record checking, and disposable email detection.  ## Authentication  All API requests require authentication using a Bearer token. Include your API key  in the Authorization header:  ``` Authorization: Bearer YOUR_API_KEY ```  API keys can be created in the MailOdds dashboard.  ## Rate Limits  Rate limits vary by plan: - Free: 10 requests/minute - Starter: 60 requests/minute   - Pro: 300 requests/minute - Business: 1000 requests/minute - Enterprise: Custom limits  ## Response Format  All responses include: - `schema_version`: API schema version (currently \"1.0\") - `request_id`: Unique request identifier for debugging  Error responses include: - `error`: Machine-readable error code - `message`: Human-readable error description 
+ * MailOdds provides email validation services to help maintain clean email lists  and improve deliverability. The API performs multiple validation checks including  format verification, domain validation, MX record checking, and disposable email detection.  ## Authentication  All API requests require authentication using a Bearer token. Include your API key  in the Authorization header:  ``` Authorization: Bearer YOUR_API_KEY ```  API keys can be created in the MailOdds dashboard.  ## Rate Limits  Rate limits vary by plan: - Free: 10 requests/minute - Starter: 60 requests/minute   - Pro: 300 requests/minute - Business: 1000 requests/minute - Enterprise: Custom limits  ## Response Format  All responses include: - `schema_version`: API schema version (currently \"1.0\") - `request_id`: Unique request identifier for debugging  Error responses include: - `error`: Machine-readable error code - `message`: Human-readable error description  ## Webhooks  MailOdds can send webhook notifications for job completion and email delivery events. Configure webhooks in the dashboard or per-job via the `webhook_url` field.  ### Event Types  | Event | Description | |-------|-------------| | `job.completed` | Validation job finished processing | | `job.failed` | Validation job failed | | `message.queued` | Email queued for delivery | | `message.delivered` | Email delivered to recipient | | `message.bounced` | Email bounced | | `message.deferred` | Email delivery deferred | | `message.failed` | Email delivery failed | | `message.opened` | Recipient opened the email | | `message.clicked` | Recipient clicked a link |  ### Payload Format  ```json {   \"event\": \"job.completed\",   \"job\": { ... },   \"timestamp\": \"2026-01-15T10:30:00Z\" } ```  ### Webhook Signing  If a webhook secret is configured, each request includes an `X-MailOdds-Signature` header containing an HMAC-SHA256 hex digest of the request body.  **Verification pseudocode:** ``` expected = HMAC-SHA256(webhook_secret, request_body) valid = constant_time_compare(request.headers[\"X-MailOdds-Signature\"], hex(expected)) ```  The payload is serialized with compact JSON (no extra whitespace, sorted keys) before signing.  ### Headers  All webhook requests include: - `Content-Type: application/json` - `User-Agent: MailOdds-Webhook/1.0` - `X-MailOdds-Event: {event_type}` - `X-Request-Id: {uuid}` - `X-MailOdds-Signature: {hmac}` (when secret is configured)  ### Retry Policy  Failed deliveries (non-2xx response or timeout) are retried up to 3 times with exponential backoff (10s, 60s, 300s). 
  *
  * The version of the OpenAPI document: 1.0.0
  * Contact: support@mailodds.com
@@ -13,38 +13,60 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct Job {
-    #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
-    pub id: Option<String>,
-    #[serde(rename = "status", skip_serializing_if = "Option::is_none")]
-    pub status: Option<Status>,
-    #[serde(rename = "total_count", skip_serializing_if = "Option::is_none")]
-    pub total_count: Option<i32>,
-    #[serde(rename = "processed_count", skip_serializing_if = "Option::is_none")]
-    pub processed_count: Option<i32>,
-    #[serde(rename = "progress_percent", skip_serializing_if = "Option::is_none")]
-    pub progress_percent: Option<i32>,
+    #[serde(rename = "id")]
+    pub id: String,
+    /// Job name (from metadata or auto-generated)
+    #[serde(rename = "name")]
+    pub name: String,
+    #[serde(rename = "status")]
+    pub status: Status,
+    #[serde(rename = "total_count")]
+    pub total_count: i32,
+    #[serde(rename = "processed_count")]
+    pub processed_count: i32,
     #[serde(rename = "summary", skip_serializing_if = "Option::is_none")]
     pub summary: Option<Box<models::JobSummary>>,
-    #[serde(rename = "created_at", skip_serializing_if = "Option::is_none")]
-    pub created_at: Option<String>,
+    #[serde(rename = "created_at")]
+    pub created_at: String,
+    /// When processing began. Omitted if not yet started.
+    #[serde(rename = "started_at", skip_serializing_if = "Option::is_none")]
+    pub started_at: Option<String>,
+    /// Omitted if not yet completed.
     #[serde(rename = "completed_at", skip_serializing_if = "Option::is_none")]
     pub completed_at: Option<String>,
+    /// When job results will be purged
+    #[serde(rename = "results_expire_at")]
+    pub results_expire_at: String,
+    /// Custom metadata attached at creation
     #[serde(rename = "metadata", skip_serializing_if = "Option::is_none")]
     pub metadata: Option<serde_json::Value>,
+    /// Error details. Present only for failed jobs.
+    #[serde(rename = "error_message", skip_serializing_if = "Option::is_none")]
+    pub error_message: Option<String>,
+    /// Request ID from the job creation request
+    #[serde(rename = "request_id", skip_serializing_if = "Option::is_none")]
+    pub request_id: Option<String>,
+    #[serde(rename = "artifacts", skip_serializing_if = "Option::is_none")]
+    pub artifacts: Option<Box<models::JobArtifacts>>,
 }
 
 impl Job {
-    pub fn new() -> Job {
+    pub fn new(id: String, name: String, status: Status, total_count: i32, processed_count: i32, created_at: String, results_expire_at: String) -> Job {
         Job {
-            id: None,
-            status: None,
-            total_count: None,
-            processed_count: None,
-            progress_percent: None,
+            id,
+            name,
+            status,
+            total_count,
+            processed_count,
             summary: None,
-            created_at: None,
+            created_at,
+            started_at: None,
             completed_at: None,
+            results_expire_at,
             metadata: None,
+            error_message: None,
+            request_id: None,
+            artifacts: None,
         }
     }
 }

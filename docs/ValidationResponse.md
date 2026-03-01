@@ -20,7 +20,7 @@ Name | Type | Description | Notes
 **free_provider** | **bool** | Whether domain is a known free email provider (e.g., gmail.com) | 
 **depth** | **Depth** | Validation depth used for this check (enum: standard, enhanced) | 
 **processed_at** | **String** | ISO 8601 timestamp of validation | 
-**suggested_email** | Option<**String**> | Typo correction suggestion. Omitted when no typo detected. | [optional]
+**suggested_email** | Option<**String**> | Domain typo correction suggestion based on a static lookup table of common misspellings (e.g. gmial.com -> gmail.com). Not validated via SMTP. Omitted when no match found. | [optional]
 **retry_after_ms** | Option<**i32**> | Suggested retry delay in milliseconds. Present only for retry_later action. | [optional]
 **has_spf** | Option<**bool**> | Whether the domain has an SPF record. Omitted for standard depth. | [optional]
 **has_dmarc** | Option<**bool**> | Whether the domain has a DMARC record. Omitted for standard depth. | [optional]

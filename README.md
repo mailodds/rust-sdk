@@ -34,6 +34,61 @@ Error responses include:
 - `error`: Machine-readable error code
 - `message`: Human-readable error description
 
+## Webhooks
+
+MailOdds can send webhook notifications for job completion and email delivery events.
+Configure webhooks in the dashboard or per-job via the `webhook_url` field.
+
+### Event Types
+
+| Event | Description |
+|-------|-------------|
+| `job.completed` | Validation job finished processing |
+| `job.failed` | Validation job failed |
+| `message.queued` | Email queued for delivery |
+| `message.delivered` | Email delivered to recipient |
+| `message.bounced` | Email bounced |
+| `message.deferred` | Email delivery deferred |
+| `message.failed` | Email delivery failed |
+| `message.opened` | Recipient opened the email |
+| `message.clicked` | Recipient clicked a link |
+
+### Payload Format
+
+```json
+{
+  \"event\": \"job.completed\",
+  \"job\": { ... },
+  \"timestamp\": \"2026-01-15T10:30:00Z\"
+}
+```
+
+### Webhook Signing
+
+If a webhook secret is configured, each request includes an `X-MailOdds-Signature` header
+containing an HMAC-SHA256 hex digest of the request body.
+
+**Verification pseudocode:**
+```
+expected = HMAC-SHA256(webhook_secret, request_body)
+valid = constant_time_compare(request.headers[\"X-MailOdds-Signature\"], hex(expected))
+```
+
+The payload is serialized with compact JSON (no extra whitespace, sorted keys) before signing.
+
+### Headers
+
+All webhook requests include:
+- `Content-Type: application/json`
+- `User-Agent: MailOdds-Webhook/1.0`
+- `X-MailOdds-Event: {event_type}`
+- `X-Request-Id: {uuid}`
+- `X-MailOdds-Signature: {hmac}` (when secret is configured)
+
+### Retry Policy
+
+Failed deliveries (non-2xx response or timeout) are retried up to 3 times with exponential backoff (10s, 60s, 300s).
+
 
 For more information, please visit [https://mailodds.com/contact](https://mailodds.com/contact)
 
@@ -53,54 +108,6 @@ Put the package under your project folder in a directory named `mailodds` and ad
 ```
 mailodds = { path = "./mailodds" }
 ```
-
-## Sending Email
-
-### Send a Single Email
-
-```rust
-use mailodds::apis::email_sending_api;
-use mailodds::apis::sending_domains_api;
-use mailodds::apis::configuration::Configuration;
-use mailodds::models::{DeliverRequest, DeliverRequestToInner, CreateSendingDomainRequest};
-
-let mut config = Configuration::new();
-config.bearer_access_token = Some("YOUR_API_KEY".to_string());
-
-let request = DeliverRequest {
-    to: vec![DeliverRequestToInner {
-        email: "recipient@example.com".to_string(),
-        name: Some("Jane".to_string()),
-    }],
-    from: "you@yourdomain.com".to_string(),
-    subject: "Hello from MailOdds".to_string(),
-    html: Some("<h1>Welcome!</h1><p>Your order has been confirmed.</p>".to_string()),
-    domain_id: "your-domain-uuid".to_string(),
-    ..Default::default()
-};
-
-let result = email_sending_api::deliver_email(&config, request).await?;
-println!("{:?}", result.delivery.message_id);
-```
-
-### Managing Sending Domains
-
-```rust
-// List sending domains
-let domains = sending_domains_api::list_sending_domains(&config).await?;
-for domain in &domains.domains {
-    println!("{}: {}", domain.domain, domain.status);
-}
-
-// Add a new sending domain
-let new_domain = sending_domains_api::create_sending_domain(
-    &config,
-    CreateSendingDomainRequest { domain: "yourdomain.com".to_string() },
-).await?;
-println!("{:?}", new_domain.dns_records); // DKIM records to add
-```
-
-For batch sending, scheduled delivery, and campaign management, see the [API documentation](https://mailodds.com/docs).
 
 ## Documentation for API Endpoints
 
@@ -138,6 +145,7 @@ Class | Method | HTTP request | Description
 *SubscriberListsApi* | [**unsubscribe_subscriber**](docs/SubscriberListsApi.md#unsubscribe_subscriber) | **DELETE** /v1/lists/{list_id}/subscribers/{subscriber_id} | Unsubscribe a subscriber
 *SuppressionListsApi* | [**add_suppression**](docs/SuppressionListsApi.md#add_suppression) | **POST** /v1/suppression | Add suppression entries
 *SuppressionListsApi* | [**check_suppression**](docs/SuppressionListsApi.md#check_suppression) | **POST** /v1/suppression/check | Check suppression status
+*SuppressionListsApi* | [**get_suppression_audit_log**](docs/SuppressionListsApi.md#get_suppression_audit_log) | **GET** /v1/suppression/audit | Get suppression audit log
 *SuppressionListsApi* | [**get_suppression_stats**](docs/SuppressionListsApi.md#get_suppression_stats) | **GET** /v1/suppression/stats | Get suppression statistics
 *SuppressionListsApi* | [**list_suppression**](docs/SuppressionListsApi.md#list_suppression) | **GET** /v1/suppression | List suppression entries
 *SuppressionListsApi* | [**remove_suppression**](docs/SuppressionListsApi.md#remove_suppression) | **DELETE** /v1/suppression | Remove suppression entries
@@ -193,7 +201,9 @@ Class | Method | HTTP request | Description
  - [GetSendingStats200ResponseStats](docs/GetSendingStats200ResponseStats.md)
  - [GetSubscribers200Response](docs/GetSubscribers200Response.md)
  - [HealthCheck200Response](docs/HealthCheck200Response.md)
+ - [IdentityScoreCheck](docs/IdentityScoreCheck.md)
  - [Job](docs/Job.md)
+ - [JobArtifacts](docs/JobArtifacts.md)
  - [JobListResponse](docs/JobListResponse.md)
  - [JobResponse](docs/JobResponse.md)
  - [JobSummary](docs/JobSummary.md)
@@ -217,12 +227,12 @@ Class | Method | HTTP request | Description
  - [SendingDomainDnsRecords](docs/SendingDomainDnsRecords.md)
  - [SendingDomainDnsRecordsNs](docs/SendingDomainDnsRecordsNs.md)
  - [SendingDomainIdentityScore](docs/SendingDomainIdentityScore.md)
- - [SendingDomainIdentityScoreChecks](docs/SendingDomainIdentityScoreChecks.md)
- - [SendingDomainIdentityScoreChecksDkim](docs/SendingDomainIdentityScoreChecksDkim.md)
- - [SendingDomainIdentityScoreChecksDmarc](docs/SendingDomainIdentityScoreChecksDmarc.md)
+ - [SendingDomainIdentityScoreBreakdown](docs/SendingDomainIdentityScoreBreakdown.md)
  - [SubscribeRequest](docs/SubscribeRequest.md)
  - [Subscriber](docs/Subscriber.md)
  - [SubscriberList](docs/SubscriberList.md)
+ - [SuppressionAuditResponse](docs/SuppressionAuditResponse.md)
+ - [SuppressionAuditResponseEntriesInner](docs/SuppressionAuditResponseEntriesInner.md)
  - [SuppressionCheckResponse](docs/SuppressionCheckResponse.md)
  - [SuppressionEntry](docs/SuppressionEntry.md)
  - [SuppressionListResponse](docs/SuppressionListResponse.md)
@@ -245,6 +255,8 @@ Class | Method | HTTP request | Description
  - [ValidationResponsePolicyApplied](docs/ValidationResponsePolicyApplied.md)
  - [ValidationResponseSuppressionMatch](docs/ValidationResponseSuppressionMatch.md)
  - [ValidationResult](docs/ValidationResult.md)
+ - [ValidationResultSuppression](docs/ValidationResultSuppression.md)
+ - [WebhookEvent](docs/WebhookEvent.md)
 
 
 To get access to the crate's generated documentation, use:

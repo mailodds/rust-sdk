@@ -6,6 +6,7 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**add_suppression**](SuppressionListsApi.md#add_suppression) | **POST** /v1/suppression | Add suppression entries
 [**check_suppression**](SuppressionListsApi.md#check_suppression) | **POST** /v1/suppression/check | Check suppression status
+[**get_suppression_audit_log**](SuppressionListsApi.md#get_suppression_audit_log) | **GET** /v1/suppression/audit | Get suppression audit log
 [**get_suppression_stats**](SuppressionListsApi.md#get_suppression_stats) | **GET** /v1/suppression/stats | Get suppression statistics
 [**list_suppression**](SuppressionListsApi.md#list_suppression) | **GET** /v1/suppression | List suppression entries
 [**remove_suppression**](SuppressionListsApi.md#remove_suppression) | **DELETE** /v1/suppression | Remove suppression entries
@@ -72,6 +73,37 @@ Name | Type | Description  | Required | Notes
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
 
 
+## get_suppression_audit_log
+
+> models::SuppressionAuditResponse get_suppression_audit_log(page, limit)
+Get suppression audit log
+
+Get a chronological log of suppression list changes (additions, removals).
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**page** | Option<**i32**> |  |  |[default to 1]
+**limit** | Option<**i32**> |  |  |[default to 20]
+
+### Return type
+
+[**models::SuppressionAuditResponse**](SuppressionAuditResponse.md)
+
+### Authorization
+
+[BearerAuth](../README.md#BearerAuth)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
 ## get_suppression_stats
 
 > models::SuppressionStatsResponse get_suppression_stats()
@@ -101,7 +133,7 @@ This endpoint does not need any parameter.
 
 ## list_suppression
 
-> models::SuppressionListResponse list_suppression(page, per_page, r#type, search)
+> models::SuppressionListResponse list_suppression(page, per_page, r#type, search, source)
 List suppression entries
 
 List all suppression entries for the account.
@@ -115,6 +147,7 @@ Name | Type | Description  | Required | Notes
 **per_page** | Option<**i32**> |  |  |[default to 50]
 **r#type** | Option<**String**> |  |  |
 **search** | Option<**String**> |  |  |
+**source** | Option<**String**> | Filter by entry source (e.g. api, bounce, complaint) |  |
 
 ### Return type
 

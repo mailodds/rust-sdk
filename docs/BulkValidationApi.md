@@ -264,7 +264,7 @@ Name | Type | Description  | Required | Notes
 
 ## list_jobs
 
-> models::JobListResponse list_jobs(page, per_page, status)
+> models::JobListResponse list_jobs(cursor, limit, status)
 List validation jobs
 
 List all validation jobs for the authenticated account.
@@ -274,8 +274,8 @@ List all validation jobs for the authenticated account.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**page** | Option<**i32**> |  |  |[default to 1]
-**per_page** | Option<**i32**> |  |  |[default to 20]
+**cursor** | Option<**String**> | Pagination cursor (ISO timestamp from previous response) |  |
+**limit** | Option<**i32**> | Results per page |  |[default to 50]
 **status** | Option<**String**> |  |  |
 
 ### Return type

@@ -40,7 +40,9 @@ docs/GetSendingStats200Response.md
 docs/GetSendingStats200ResponseStats.md
 docs/GetSubscribers200Response.md
 docs/HealthCheck200Response.md
+docs/IdentityScoreCheck.md
 docs/Job.md
+docs/JobArtifacts.md
 docs/JobListResponse.md
 docs/JobResponse.md
 docs/JobSummary.md
@@ -64,14 +66,14 @@ docs/SendingDomain.md
 docs/SendingDomainDnsRecords.md
 docs/SendingDomainDnsRecordsNs.md
 docs/SendingDomainIdentityScore.md
-docs/SendingDomainIdentityScoreChecks.md
-docs/SendingDomainIdentityScoreChecksDkim.md
-docs/SendingDomainIdentityScoreChecksDmarc.md
+docs/SendingDomainIdentityScoreBreakdown.md
 docs/SendingDomainsApi.md
 docs/SubscribeRequest.md
 docs/Subscriber.md
 docs/SubscriberList.md
 docs/SubscriberListsApi.md
+docs/SuppressionAuditResponse.md
+docs/SuppressionAuditResponseEntriesInner.md
 docs/SuppressionCheckResponse.md
 docs/SuppressionEntry.md
 docs/SuppressionListResponse.md
@@ -97,6 +99,8 @@ docs/ValidationResponse.md
 docs/ValidationResponsePolicyApplied.md
 docs/ValidationResponseSuppressionMatch.md
 docs/ValidationResult.md
+docs/ValidationResultSuppression.md
+docs/WebhookEvent.md
 git_push.sh
 src/apis/bulk_validation_api.rs
 src/apis/configuration.rs
@@ -114,7 +118,6 @@ src/models/add_suppression_request.rs
 src/models/add_suppression_request_entries_inner.rs
 src/models/add_suppression_response.rs
 src/models/batch_deliver_request.rs
-src/models/batch_deliver_request_structured_data.rs
 src/models/batch_deliver_response.rs
 src/models/batch_deliver_response_delivery.rs
 src/models/batch_deliver_response_rejected_inner.rs
@@ -133,7 +136,6 @@ src/models/delete_policy_200_response.rs
 src/models/delete_policy_rule_200_response.rs
 src/models/deliver_request.rs
 src/models/deliver_request_options.rs
-src/models/deliver_request_structured_data.rs
 src/models/deliver_request_to_inner.rs
 src/models/deliver_response.rs
 src/models/deliver_response_delivery.rs
@@ -145,7 +147,9 @@ src/models/get_sending_stats_200_response.rs
 src/models/get_sending_stats_200_response_stats.rs
 src/models/get_subscribers_200_response.rs
 src/models/health_check_200_response.rs
+src/models/identity_score_check.rs
 src/models/job.rs
+src/models/job_artifacts.rs
 src/models/job_list_response.rs
 src/models/job_response.rs
 src/models/job_summary.rs
@@ -170,12 +174,12 @@ src/models/sending_domain.rs
 src/models/sending_domain_dns_records.rs
 src/models/sending_domain_dns_records_ns.rs
 src/models/sending_domain_identity_score.rs
-src/models/sending_domain_identity_score_checks.rs
-src/models/sending_domain_identity_score_checks_dkim.rs
-src/models/sending_domain_identity_score_checks_dmarc.rs
+src/models/sending_domain_identity_score_breakdown.rs
 src/models/subscribe_request.rs
 src/models/subscriber.rs
 src/models/subscriber_list.rs
+src/models/suppression_audit_response.rs
+src/models/suppression_audit_response_entries_inner.rs
 src/models/suppression_check_response.rs
 src/models/suppression_entry.rs
 src/models/suppression_list_response.rs
@@ -198,3 +202,5 @@ src/models/validation_response.rs
 src/models/validation_response_policy_applied.rs
 src/models/validation_response_suppression_match.rs
 src/models/validation_result.rs
+src/models/validation_result_suppression.rs
+src/models/webhook_event.rs

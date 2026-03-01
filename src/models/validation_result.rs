@@ -1,7 +1,7 @@
 /*
  * MailOdds Email Validation API
  *
- * MailOdds provides email validation services to help maintain clean email lists  and improve deliverability. The API performs multiple validation checks including  format verification, domain validation, MX record checking, and disposable email detection.  ## Authentication  All API requests require authentication using a Bearer token. Include your API key  in the Authorization header:  ``` Authorization: Bearer YOUR_API_KEY ```  API keys can be created in the MailOdds dashboard.  ## Rate Limits  Rate limits vary by plan: - Free: 10 requests/minute - Starter: 60 requests/minute   - Pro: 300 requests/minute - Business: 1000 requests/minute - Enterprise: Custom limits  ## Response Format  All responses include: - `schema_version`: API schema version (currently \"1.0\") - `request_id`: Unique request identifier for debugging  Error responses include: - `error`: Machine-readable error code - `message`: Human-readable error description 
+ * MailOdds provides email validation services to help maintain clean email lists  and improve deliverability. The API performs multiple validation checks including  format verification, domain validation, MX record checking, and disposable email detection.  ## Authentication  All API requests require authentication using a Bearer token. Include your API key  in the Authorization header:  ``` Authorization: Bearer YOUR_API_KEY ```  API keys can be created in the MailOdds dashboard.  ## Rate Limits  Rate limits vary by plan: - Free: 10 requests/minute - Starter: 60 requests/minute   - Pro: 300 requests/minute - Business: 1000 requests/minute - Enterprise: Custom limits  ## Response Format  All responses include: - `schema_version`: API schema version (currently \"1.0\") - `request_id`: Unique request identifier for debugging  Error responses include: - `error`: Machine-readable error code - `message`: Human-readable error description  ## Webhooks  MailOdds can send webhook notifications for job completion and email delivery events. Configure webhooks in the dashboard or per-job via the `webhook_url` field.  ### Event Types  | Event | Description | |-------|-------------| | `job.completed` | Validation job finished processing | | `job.failed` | Validation job failed | | `message.queued` | Email queued for delivery | | `message.delivered` | Email delivered to recipient | | `message.bounced` | Email bounced | | `message.deferred` | Email delivery deferred | | `message.failed` | Email delivery failed | | `message.opened` | Recipient opened the email | | `message.clicked` | Recipient clicked a link |  ### Payload Format  ```json {   \"event\": \"job.completed\",   \"job\": { ... },   \"timestamp\": \"2026-01-15T10:30:00Z\" } ```  ### Webhook Signing  If a webhook secret is configured, each request includes an `X-MailOdds-Signature` header containing an HMAC-SHA256 hex digest of the request body.  **Verification pseudocode:** ``` expected = HMAC-SHA256(webhook_secret, request_body) valid = constant_time_compare(request.headers[\"X-MailOdds-Signature\"], hex(expected)) ```  The payload is serialized with compact JSON (no extra whitespace, sorted keys) before signing.  ### Headers  All webhook requests include: - `Content-Type: application/json` - `User-Agent: MailOdds-Webhook/1.0` - `X-MailOdds-Event: {event_type}` - `X-Request-Id: {uuid}` - `X-MailOdds-Signature: {hmac}` (when secret is configured)  ### Retry Policy  Failed deliveries (non-2xx response or timeout) are retried up to 3 times with exponential backoff (10s, 60s, 300s). 
  *
  * The version of the OpenAPI document: 1.0.0
  * Contact: support@mailodds.com
@@ -11,28 +11,46 @@
 use crate::models;
 use serde::{Deserialize, Serialize};
 
+/// ValidationResult : Individual result from a bulk validation job
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ValidationResult {
-    #[serde(rename = "email", skip_serializing_if = "Option::is_none")]
-    pub email: Option<String>,
-    #[serde(rename = "status", skip_serializing_if = "Option::is_none")]
-    pub status: Option<Status>,
+    #[serde(rename = "email")]
+    pub email: String,
+    #[serde(rename = "status")]
+    pub status: Status,
+    /// Detailed reason. Omitted when none.
     #[serde(rename = "sub_status", skip_serializing_if = "Option::is_none")]
     pub sub_status: Option<String>,
-    #[serde(rename = "action", skip_serializing_if = "Option::is_none")]
-    pub action: Option<Action>,
-    #[serde(rename = "processed_at", skip_serializing_if = "Option::is_none")]
-    pub processed_at: Option<String>,
+    #[serde(rename = "action")]
+    pub action: Action,
+    /// Email domain
+    #[serde(rename = "domain")]
+    pub domain: String,
+    /// Primary MX hostname. Omitted when not resolved.
+    #[serde(rename = "mx_host", skip_serializing_if = "Option::is_none")]
+    pub mx_host: Option<String>,
+    /// Detailed check results (JSONB). Omitted when not available.
+    #[serde(rename = "checks", skip_serializing_if = "Option::is_none")]
+    pub checks: Option<std::collections::HashMap<String, serde_json::Value>>,
+    #[serde(rename = "suppression", skip_serializing_if = "Option::is_none")]
+    pub suppression: Option<Box<models::ValidationResultSuppression>>,
+    #[serde(rename = "processed_at")]
+    pub processed_at: String,
 }
 
 impl ValidationResult {
-    pub fn new() -> ValidationResult {
+    /// Individual result from a bulk validation job
+    pub fn new(email: String, status: Status, action: Action, domain: String, processed_at: String) -> ValidationResult {
         ValidationResult {
-            email: None,
-            status: None,
+            email,
+            status,
             sub_status: None,
-            action: None,
-            processed_at: None,
+            action,
+            domain,
+            mx_host: None,
+            checks: None,
+            suppression: None,
+            processed_at,
         }
     }
 }

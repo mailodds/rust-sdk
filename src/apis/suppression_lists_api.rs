@@ -1,7 +1,7 @@
 /*
  * MailOdds Email Validation API
  *
- * MailOdds provides email validation services to help maintain clean email lists  and improve deliverability. The API performs multiple validation checks including  format verification, domain validation, MX record checking, and disposable email detection.  ## Authentication  All API requests require authentication using a Bearer token. Include your API key  in the Authorization header:  ``` Authorization: Bearer YOUR_API_KEY ```  API keys can be created in the MailOdds dashboard.  ## Rate Limits  Rate limits vary by plan: - Free: 10 requests/minute - Starter: 60 requests/minute   - Pro: 300 requests/minute - Business: 1000 requests/minute - Enterprise: Custom limits  ## Response Format  All responses include: - `schema_version`: API schema version (currently \"1.0\") - `request_id`: Unique request identifier for debugging  Error responses include: - `error`: Machine-readable error code - `message`: Human-readable error description 
+ * MailOdds provides email validation services to help maintain clean email lists  and improve deliverability. The API performs multiple validation checks including  format verification, domain validation, MX record checking, and disposable email detection.  ## Authentication  All API requests require authentication using a Bearer token. Include your API key  in the Authorization header:  ``` Authorization: Bearer YOUR_API_KEY ```  API keys can be created in the MailOdds dashboard.  ## Rate Limits  Rate limits vary by plan: - Free: 10 requests/minute - Starter: 60 requests/minute   - Pro: 300 requests/minute - Business: 1000 requests/minute - Enterprise: Custom limits  ## Response Format  All responses include: - `schema_version`: API schema version (currently \"1.0\") - `request_id`: Unique request identifier for debugging  Error responses include: - `error`: Machine-readable error code - `message`: Human-readable error description  ## Webhooks  MailOdds can send webhook notifications for job completion and email delivery events. Configure webhooks in the dashboard or per-job via the `webhook_url` field.  ### Event Types  | Event | Description | |-------|-------------| | `job.completed` | Validation job finished processing | | `job.failed` | Validation job failed | | `message.queued` | Email queued for delivery | | `message.delivered` | Email delivered to recipient | | `message.bounced` | Email bounced | | `message.deferred` | Email delivery deferred | | `message.failed` | Email delivery failed | | `message.opened` | Recipient opened the email | | `message.clicked` | Recipient clicked a link |  ### Payload Format  ```json {   \"event\": \"job.completed\",   \"job\": { ... },   \"timestamp\": \"2026-01-15T10:30:00Z\" } ```  ### Webhook Signing  If a webhook secret is configured, each request includes an `X-MailOdds-Signature` header containing an HMAC-SHA256 hex digest of the request body.  **Verification pseudocode:** ``` expected = HMAC-SHA256(webhook_secret, request_body) valid = constant_time_compare(request.headers[\"X-MailOdds-Signature\"], hex(expected)) ```  The payload is serialized with compact JSON (no extra whitespace, sorted keys) before signing.  ### Headers  All webhook requests include: - `Content-Type: application/json` - `User-Agent: MailOdds-Webhook/1.0` - `X-MailOdds-Event: {event_type}` - `X-Request-Id: {uuid}` - `X-MailOdds-Signature: {hmac}` (when secret is configured)  ### Retry Policy  Failed deliveries (non-2xx response or timeout) are retried up to 3 times with exponential backoff (10s, 60s, 300s). 
  *
  * The version of the OpenAPI document: 1.0.0
  * Contact: support@mailodds.com
@@ -28,6 +28,14 @@ pub enum AddSuppressionError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum CheckSuppressionError {
+    Status401(models::ErrorResponse),
+    UnknownValue(serde_json::Value),
+}
+
+/// struct for typed errors of method [`get_suppression_audit_log`]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum GetSuppressionAuditLogError {
     Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
@@ -139,6 +147,53 @@ pub async fn check_suppression(configuration: &configuration::Configuration, che
     }
 }
 
+/// Get a chronological log of suppression list changes (additions, removals).
+pub async fn get_suppression_audit_log(configuration: &configuration::Configuration, page: Option<i32>, limit: Option<i32>) -> Result<models::SuppressionAuditResponse, Error<GetSuppressionAuditLogError>> {
+    // add a prefix to parameters to efficiently prevent name collisions
+    let p_query_page = page;
+    let p_query_limit = limit;
+
+    let uri_str = format!("{}/v1/suppression/audit", configuration.base_path);
+    let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
+
+    if let Some(ref param_value) = p_query_page {
+        req_builder = req_builder.query(&[("page", &param_value.to_string())]);
+    }
+    if let Some(ref param_value) = p_query_limit {
+        req_builder = req_builder.query(&[("limit", &param_value.to_string())]);
+    }
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+    }
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+
+    let req = req_builder.build()?;
+    let resp = configuration.client.execute(req).await?;
+
+    let status = resp.status();
+    let content_type = resp
+        .headers()
+        .get("content-type")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("application/octet-stream");
+    let content_type = super::ContentType::from(content_type);
+
+    if !status.is_client_error() && !status.is_server_error() {
+        let content = resp.text().await?;
+        match content_type {
+            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::SuppressionAuditResponse`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::SuppressionAuditResponse`")))),
+        }
+    } else {
+        let content = resp.text().await?;
+        let entity: Option<GetSuppressionAuditLogError> = serde_json::from_str(&content).ok();
+        Err(Error::ResponseError(ResponseContent { status, content, entity }))
+    }
+}
+
 /// Get statistics about the suppression list.
 pub async fn get_suppression_stats(configuration: &configuration::Configuration, ) -> Result<models::SuppressionStatsResponse, Error<GetSuppressionStatsError>> {
 
@@ -178,12 +233,13 @@ pub async fn get_suppression_stats(configuration: &configuration::Configuration,
 }
 
 /// List all suppression entries for the account.
-pub async fn list_suppression(configuration: &configuration::Configuration, page: Option<i32>, per_page: Option<i32>, r#type: Option<&str>, search: Option<&str>) -> Result<models::SuppressionListResponse, Error<ListSuppressionError>> {
+pub async fn list_suppression(configuration: &configuration::Configuration, page: Option<i32>, per_page: Option<i32>, r#type: Option<&str>, search: Option<&str>, source: Option<&str>) -> Result<models::SuppressionListResponse, Error<ListSuppressionError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_query_page = page;
     let p_query_per_page = per_page;
     let p_query_type = r#type;
     let p_query_search = search;
+    let p_query_source = source;
 
     let uri_str = format!("{}/v1/suppression", configuration.base_path);
     let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
@@ -199,6 +255,9 @@ pub async fn list_suppression(configuration: &configuration::Configuration, page
     }
     if let Some(ref param_value) = p_query_search {
         req_builder = req_builder.query(&[("search", &param_value.to_string())]);
+    }
+    if let Some(ref param_value) = p_query_source {
+        req_builder = req_builder.query(&[("source", &param_value.to_string())]);
     }
     if let Some(ref user_agent) = configuration.user_agent {
         req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());

@@ -15,6 +15,9 @@ Name | Type | Description | Notes
 **tags** | Option<**Vec<String>**> | Tags for categorization | [optional]
 **campaign_type** | Option<**CampaignType**> | Campaign type for JSON-LD auto-generation (enum: order_confirmation, shipping_notification, subscription_confirm, review_request, event_invitation, promotional, welcome, password_reset, appointment_reminder, ticket_confirmation) | [optional]
 **structured_data** | Option<[**models::DeliverRequestStructuredData**](DeliverRequestStructuredData.md)> |  | [optional]
+**schema_data** | Option<**std::collections::HashMap<String, String>**> | Key-value pairs for campaign_type JSON-LD resolution (e.g., order_number, tracking_url) | [optional]
+**auto_detect_schema** | Option<**bool**> | Auto-detect JSON-LD structured data type from subject line | [optional][default to false]
+**ai_summary** | Option<**String**> | Hidden text summary for AI email assistants (max 500 characters) | [optional]
 **options** | Option<[**models::DeliverRequestOptions**](DeliverRequestOptions.md)> |  | [optional]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)

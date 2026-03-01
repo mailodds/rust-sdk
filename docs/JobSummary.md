@@ -9,7 +9,6 @@ Name | Type | Description | Notes
 **catch_all** | Option<**i32**> |  | [optional]
 **do_not_mail** | Option<**i32**> |  | [optional]
 **unknown** | Option<**i32**> |  | [optional]
-**cancelled_pending** | Option<**i32**> |  | [optional]
 
 [[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
 

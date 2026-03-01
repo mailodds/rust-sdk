@@ -54,6 +54,54 @@ Put the package under your project folder in a directory named `mailodds` and ad
 mailodds = { path = "./mailodds" }
 ```
 
+## Sending Email
+
+### Send a Single Email
+
+```rust
+use mailodds::apis::email_sending_api;
+use mailodds::apis::sending_domains_api;
+use mailodds::apis::configuration::Configuration;
+use mailodds::models::{DeliverRequest, DeliverRequestToInner, CreateSendingDomainRequest};
+
+let mut config = Configuration::new();
+config.bearer_access_token = Some("YOUR_API_KEY".to_string());
+
+let request = DeliverRequest {
+    to: vec![DeliverRequestToInner {
+        email: "recipient@example.com".to_string(),
+        name: Some("Jane".to_string()),
+    }],
+    from: "you@yourdomain.com".to_string(),
+    subject: "Hello from MailOdds".to_string(),
+    html: Some("<h1>Welcome!</h1><p>Your order has been confirmed.</p>".to_string()),
+    domain_id: "your-domain-uuid".to_string(),
+    ..Default::default()
+};
+
+let result = email_sending_api::deliver_email(&config, request).await?;
+println!("{:?}", result.delivery.message_id);
+```
+
+### Managing Sending Domains
+
+```rust
+// List sending domains
+let domains = sending_domains_api::list_sending_domains(&config).await?;
+for domain in &domains.domains {
+    println!("{}: {}", domain.domain, domain.status);
+}
+
+// Add a new sending domain
+let new_domain = sending_domains_api::create_sending_domain(
+    &config,
+    CreateSendingDomainRequest { domain: "yourdomain.com".to_string() },
+).await?;
+println!("{:?}", new_domain.dns_records); // DKIM records to add
+```
+
+For batch sending, scheduled delivery, and campaign management, see the [API documentation](https://mailodds.com/docs).
+
 ## Documentation for API Endpoints
 
 All URIs are relative to *https://api.mailodds.com/v1*

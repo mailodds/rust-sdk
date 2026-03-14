@@ -111,10 +111,21 @@ impl From<&str> for ContentType {
     }
 }
 
+pub mod blacklist_monitoring_api;
+pub mod bounce_analysis_api;
 pub mod bulk_validation_api;
+pub mod campaign_analytics_api;
+pub mod campaigns_api;
+pub mod contact_lists_api;
+pub mod content_classification_api;
+pub mod dmarc_monitoring_api;
 pub mod email_sending_api;
 pub mod email_validation_api;
+pub mod message_events_api;
+pub mod sender_health_api;
 pub mod sending_domains_api;
+pub mod server_tests_api;
+pub mod spam_checks_api;
 pub mod subscriber_lists_api;
 pub mod suppression_lists_api;
 pub mod system_api;

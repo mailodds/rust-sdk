@@ -1,0 +1,13 @@
+# QueryContactListRequest
+
+## Properties
+
+Name | Type | Description | Notes
+------------ | ------------- | ------------- | -------------
+**filters** | Option<[**Vec<models::QueryContactListRequestFiltersInner>**](QueryContactListRequestFiltersInner.md)> | Array of filter conditions | [optional]
+**page** | Option<**i32**> |  | [optional][default to 1]
+**per_page** | Option<**i32**> |  | [optional][default to 100]
+
+[[Back to Model list]](../README.md#documentation-for-models) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to README]](../README.md)
+
+

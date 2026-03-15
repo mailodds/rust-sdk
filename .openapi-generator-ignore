@@ -31,3 +31,4 @@ Cargo.toml
 # Preserve oneOf array variant name fix (generator bug)
 src/models/batch_deliver_request_structured_data.rs
 src/models/deliver_request_structured_data.rs
+README.md

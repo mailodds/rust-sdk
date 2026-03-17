@@ -13,36 +13,20 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct CreateBounceAnalysisRequest {
-    /// Sending domain UUID to analyze bounces for
-    #[serde(rename = "domain_id")]
-    pub domain_id: String,
-    /// Time period to analyze
-    #[serde(rename = "period", skip_serializing_if = "Option::is_none")]
-    pub period: Option<Period>,
+    /// Bounce log text to analyze. Identifies patterns, categorizes bounce types, and provides remediation recommendations.
+    #[serde(rename = "text")]
+    pub text: String,
+    /// Optional name for this bounce analysis
+    #[serde(rename = "name", skip_serializing_if = "Option::is_none")]
+    pub name: Option<String>,
 }
 
 impl CreateBounceAnalysisRequest {
-    pub fn new(domain_id: String) -> CreateBounceAnalysisRequest {
+    pub fn new(text: String) -> CreateBounceAnalysisRequest {
         CreateBounceAnalysisRequest {
-            domain_id,
-            period: None,
+            text,
+            name: None,
         }
-    }
-}
-/// Time period to analyze
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
-pub enum Period {
-    #[serde(rename = "7d")]
-    Variant7d,
-    #[serde(rename = "30d")]
-    Variant30d,
-    #[serde(rename = "90d")]
-    Variant90d,
-}
-
-impl Default for Period {
-    fn default() -> Period {
-        Self::Variant7d
     }
 }
 

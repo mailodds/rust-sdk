@@ -12,21 +12,30 @@ use crate::models;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
-pub struct GetReputationTimeline200Response {
-    #[serde(rename = "schema_version", skip_serializing_if = "Option::is_none")]
-    pub schema_version: Option<String>,
-    #[serde(rename = "request_id", skip_serializing_if = "Option::is_none")]
-    pub request_id: Option<String>,
-    #[serde(rename = "timeline", skip_serializing_if = "Option::is_none")]
-    pub timeline: Option<Box<models::GetReputationTimeline200ResponseTimeline>>,
+pub struct GetReputationTimeline200ResponseTimelineTimelineInner {
+    #[serde(rename = "date", skip_serializing_if = "Option::is_none")]
+    pub date: Option<String>,
+    #[serde(rename = "sent", skip_serializing_if = "Option::is_none")]
+    pub sent: Option<i32>,
+    #[serde(rename = "bounce_rate", skip_serializing_if = "Option::is_none")]
+    pub bounce_rate: Option<f64>,
+    #[serde(rename = "complaint_rate", skip_serializing_if = "Option::is_none")]
+    pub complaint_rate: Option<f64>,
+    #[serde(rename = "open_rate", skip_serializing_if = "Option::is_none")]
+    pub open_rate: Option<f64>,
+    #[serde(rename = "delivery_rate", skip_serializing_if = "Option::is_none")]
+    pub delivery_rate: Option<f64>,
 }
 
-impl GetReputationTimeline200Response {
-    pub fn new() -> GetReputationTimeline200Response {
-        GetReputationTimeline200Response {
-            schema_version: None,
-            request_id: None,
-            timeline: None,
+impl GetReputationTimeline200ResponseTimelineTimelineInner {
+    pub fn new() -> GetReputationTimeline200ResponseTimelineTimelineInner {
+        GetReputationTimeline200ResponseTimelineTimelineInner {
+            date: None,
+            sent: None,
+            bounce_rate: None,
+            complaint_rate: None,
+            open_rate: None,
+            delivery_rate: None,
         }
     }
 }

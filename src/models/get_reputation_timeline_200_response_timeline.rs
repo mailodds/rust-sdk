@@ -12,22 +12,35 @@ use crate::models;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
-pub struct GetReputationTimeline200Response {
-    #[serde(rename = "schema_version", skip_serializing_if = "Option::is_none")]
-    pub schema_version: Option<String>,
-    #[serde(rename = "request_id", skip_serializing_if = "Option::is_none")]
-    pub request_id: Option<String>,
+pub struct GetReputationTimeline200ResponseTimeline {
+    #[serde(rename = "period", skip_serializing_if = "Option::is_none")]
+    pub period: Option<Period>,
     #[serde(rename = "timeline", skip_serializing_if = "Option::is_none")]
-    pub timeline: Option<Box<models::GetReputationTimeline200ResponseTimeline>>,
+    pub timeline: Option<Vec<models::GetReputationTimeline200ResponseTimelineTimelineInner>>,
 }
 
-impl GetReputationTimeline200Response {
-    pub fn new() -> GetReputationTimeline200Response {
-        GetReputationTimeline200Response {
-            schema_version: None,
-            request_id: None,
+impl GetReputationTimeline200ResponseTimeline {
+    pub fn new() -> GetReputationTimeline200ResponseTimeline {
+        GetReputationTimeline200ResponseTimeline {
+            period: None,
             timeline: None,
         }
+    }
+}
+/// 
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
+pub enum Period {
+    #[serde(rename = "24h")]
+    Variant24h,
+    #[serde(rename = "7d")]
+    Variant7d,
+    #[serde(rename = "30d")]
+    Variant30d,
+}
+
+impl Default for Period {
+    fn default() -> Period {
+        Self::Variant24h
     }
 }
 

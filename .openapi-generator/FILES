@@ -150,6 +150,8 @@ docs/GetProduct200Response.md
 docs/GetReplyForwarding200Response.md
 docs/GetReputation200Response.md
 docs/GetReputationTimeline200Response.md
+docs/GetReputationTimeline200ResponseTimeline.md
+docs/GetReputationTimeline200ResponseTimelineTimelineInner.md
 docs/GetSenderHealth200Response.md
 docs/GetSenderHealth200ResponseComponents.md
 docs/GetSenderHealth200ResponseComponentsDeliveryRate.md
@@ -462,6 +464,8 @@ src/models/get_product_200_response.rs
 src/models/get_reply_forwarding_200_response.rs
 src/models/get_reputation_200_response.rs
 src/models/get_reputation_timeline_200_response.rs
+src/models/get_reputation_timeline_200_response_timeline.rs
+src/models/get_reputation_timeline_200_response_timeline_timeline_inner.rs
 src/models/get_sender_health_200_response.rs
 src/models/get_sender_health_200_response_components.rs
 src/models/get_sender_health_200_response_components_delivery_rate.rs

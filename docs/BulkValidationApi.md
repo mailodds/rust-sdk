@@ -13,6 +13,7 @@ Method | HTTP request | Description
 [**get_job_results**](BulkValidationApi.md#get_job_results) | **GET** /v1/jobs/{job_id}/results | Get job results
 [**get_presigned_upload**](BulkValidationApi.md#get_presigned_upload) | **POST** /v1/jobs/upload/presigned | Get S3 presigned upload URL
 [**list_jobs**](BulkValidationApi.md#list_jobs) | **GET** /v1/jobs | List validation jobs
+[**retry_job**](BulkValidationApi.md#retry_job) | **POST** /v1/jobs/{job_id}/retry | Retry failed job
 
 
 
@@ -281,6 +282,36 @@ Name | Type | Description  | Required | Notes
 ### Return type
 
 [**models::JobListResponse**](JobListResponse.md)
+
+### Authorization
+
+[BearerAuth](../README.md#BearerAuth)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## retry_job
+
+> models::RetryJob200Response retry_job(job_id)
+Retry failed job
+
+Retry processing for a failed or cancelled validation job. Re-queues unprocessed emails.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**job_id** | **String** | Job ID | [required] |
+
+### Return type
+
+[**models::RetryJob200Response**](retryJob_200_response.md)
 
 ### Authorization
 

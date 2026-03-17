@@ -11,7 +11,7 @@
 use crate::models;
 use serde::{Deserialize, Serialize};
 
-/// ValidationResponsePolicyApplied : Present when a validation policy modified the result.
+/// ValidationResponsePolicyApplied : Present when a validation policy modified the result. Null when no policy is applied.
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ValidationResponsePolicyApplied {
     #[serde(rename = "policy_id", skip_serializing_if = "Option::is_none")]
@@ -25,7 +25,7 @@ pub struct ValidationResponsePolicyApplied {
 }
 
 impl ValidationResponsePolicyApplied {
-    /// Present when a validation policy modified the result.
+    /// Present when a validation policy modified the result. Null when no policy is applied.
     pub fn new() -> ValidationResponsePolicyApplied {
         ValidationResponsePolicyApplied {
             policy_id: None,

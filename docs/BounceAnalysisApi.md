@@ -6,6 +6,7 @@ Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**create_bounce_analysis**](BounceAnalysisApi.md#create_bounce_analysis) | **POST** /v1/bounce-analyses | Analyze bounce logs
 [**cross_reference_bounces**](BounceAnalysisApi.md#cross_reference_bounces) | **GET** /v1/bounce-analyses/{analysis_id}/cross-reference | Cross-reference bounces with validation logs
+[**delete_bounce_analysis**](BounceAnalysisApi.md#delete_bounce_analysis) | **DELETE** /v1/bounce-analyses/{analysis_id} | Delete bounce analysis
 [**get_bounce_analysis**](BounceAnalysisApi.md#get_bounce_analysis) | **GET** /v1/bounce-analyses/{analysis_id} | Get bounce analysis
 [**get_bounce_records**](BounceAnalysisApi.md#get_bounce_records) | **GET** /v1/bounce-analyses/{analysis_id}/records | Get bounce records
 
@@ -58,6 +59,36 @@ Name | Type | Description  | Required | Notes
 ### Return type
 
 [**models::CrossReferenceBounces200Response**](crossReferenceBounces_200_response.md)
+
+### Authorization
+
+[BearerAuth](../README.md#BearerAuth)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## delete_bounce_analysis
+
+> models::DeletePolicyRule200Response delete_bounce_analysis(analysis_id)
+Delete bounce analysis
+
+Delete a bounce analysis and all associated records.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**analysis_id** | **String** | Bounce analysis ID | [required] |
+
+### Return type
+
+[**models::DeletePolicyRule200Response**](deletePolicyRule_200_response.md)
 
 ### Authorization
 

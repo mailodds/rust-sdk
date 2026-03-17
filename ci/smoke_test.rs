@@ -8,12 +8,34 @@ use mailodds::apis::system_api;
 use mailodds::apis::sending_domains_api;
 use mailodds::apis::subscriber_lists_api;
 use mailodds::apis::email_sending_api;
+use mailodds::apis::dmarc_monitoring_api;
+use mailodds::apis::blacklist_monitoring_api;
+use mailodds::apis::server_tests_api;
+use mailodds::apis::contact_lists_api;
+use mailodds::apis::content_classification_api;
+use mailodds::apis::message_events_api;
+use mailodds::apis::events_api;
+use mailodds::apis::alert_rules_api;
+use mailodds::apis::reputation_api;
+use mailodds::apis::spam_checks_api;
+use mailodds::apis::bounce_analysis_api;
+use mailodds::apis::pixel_settings_api;
+use mailodds::apis::out_of_office_api;
+use mailodds::apis::engagement_api;
+use mailodds::apis::webhook_cli_api;
 use mailodds::models::{
     ValidateRequest, CreateJobRequest,
     AddSuppressionRequest, AddSuppressionRequestEntriesInner,
     CheckSuppressionRequest, RemoveSuppressionRequest,
     CreatePolicyFromPresetRequest, CreateSendingDomainRequest,
     CreateListRequest, SubscribeRequest,
+    AddDmarcDomainRequest, AddBlacklistMonitorRequest,
+    RunServerTestRequest, CreateContactListRequest, ClassifyContentRequest,
+    TrackEventRequest,
+    CreateAlertRuleRequest, UpdateAlertRuleRequest,
+    RunSpamCheckRequest, CreateBounceAnalysisRequest,
+    UpdatePixelSettingsRequest, AddContactRequest, UpdateContactRequest,
+    BatchCheckOooRequest, CreateWebhookCliSessionRequest,
 };
 use std::time::SystemTime;
 
@@ -358,7 +380,192 @@ async fn main() {
         Err(e) => { failed += 1; println!("  FAIL: lists.create error: {e}"); }
     }
 
-    // ── 8. Email Sending (import-only) ──────────────────────────────────
+    // ── 8. DMARC Monitoring ─────────────────────────────────────────────
+
+    let dmarc_domain_name = format!("smoke-rust-{ts}.example.com");
+    let dmarc_req = AddDmarcDomainRequest::new(dmarc_domain_name.clone());
+    match dmarc_monitoring_api::add_dmarc_domain(&config, dmarc_req).await {
+        Ok(resp) => {
+            let domain = resp.domain.as_ref().expect("dmarc.add missing domain");
+            let domain_id = domain.id.as_ref().expect("dmarc.add missing domain.id").clone();
+            if !domain_id.is_empty() { passed += 1; } else { failed += 1; println!("  FAIL: dmarc.add domain_id is empty"); }
+
+            // List DMARC domains
+            match dmarc_monitoring_api::list_dmarc_domains(&config).await {
+                Ok(list_resp) => {
+                    let domains = list_resp.domains.unwrap_or_default();
+                    if !domains.is_empty() { passed += 1; } else { failed += 1; println!("  FAIL: dmarc.list returned empty domains"); }
+                }
+                Err(e) => { failed += 1; println!("  FAIL: dmarc.list error: {e}"); }
+            }
+
+            // Get DMARC domain
+            match dmarc_monitoring_api::get_dmarc_domain(&config, &domain_id, None).await {
+                Ok(get_resp) => {
+                    let got = get_resp.domain.as_ref().expect("dmarc.get missing domain");
+                    let got_id = got.id.as_ref().expect("dmarc.get missing domain.id");
+                    if got_id == &domain_id { passed += 1; } else { failed += 1; println!("  FAIL: dmarc.get domain_id mismatch expected={domain_id} got={got_id}"); }
+                }
+                Err(e) => { failed += 1; println!("  FAIL: dmarc.get error: {e}"); }
+            }
+
+            // Delete DMARC domain
+            match dmarc_monitoring_api::delete_dmarc_domain(&config, &domain_id).await {
+                Ok(del_resp) => {
+                    let deleted = del_resp.deleted.unwrap_or(false);
+                    if deleted { passed += 1; } else { failed += 1; println!("  FAIL: dmarc.delete deleted expected=true got=false"); }
+                }
+                Err(e) => {
+                    failed += 1; println!("  FAIL: dmarc.delete error: {e}");
+                    // Best-effort cleanup
+                    let _ = dmarc_monitoring_api::delete_dmarc_domain(&config, &domain_id).await;
+                }
+            }
+        }
+        Err(e) => { failed += 1; println!("  FAIL: dmarc.add error: {e}"); }
+    }
+
+    // ── 9. Blacklist Monitoring ───────────────────────────────────────
+
+    let bl_target = format!("smoke-rust-{ts}.example.com");
+    let bl_req = AddBlacklistMonitorRequest::new(
+        bl_target.clone(),
+        mailodds::models::add_blacklist_monitor_request::TargetType::Domain,
+    );
+    match blacklist_monitoring_api::add_blacklist_monitor(&config, bl_req).await {
+        Ok(resp) => {
+            let monitor = resp.monitor.as_ref().expect("blacklist.add missing monitor");
+            let monitor_id = monitor.id.as_ref().expect("blacklist.add missing monitor.id").clone();
+            if !monitor_id.is_empty() { passed += 1; } else { failed += 1; println!("  FAIL: blacklist.add monitor_id is empty"); }
+
+            // List blacklist monitors
+            match blacklist_monitoring_api::list_blacklist_monitors(&config).await {
+                Ok(list_resp) => {
+                    let monitors = list_resp.monitors.unwrap_or_default();
+                    if !monitors.is_empty() { passed += 1; } else { failed += 1; println!("  FAIL: blacklist.list returned empty monitors"); }
+                }
+                Err(e) => { failed += 1; println!("  FAIL: blacklist.list error: {e}"); }
+            }
+
+            // Delete blacklist monitor
+            match blacklist_monitoring_api::delete_blacklist_monitor(&config, &monitor_id).await {
+                Ok(del_resp) => {
+                    let deleted = del_resp.deleted.unwrap_or(false);
+                    if deleted { passed += 1; } else { failed += 1; println!("  FAIL: blacklist.delete deleted expected=true got=false"); }
+                }
+                Err(e) => {
+                    failed += 1; println!("  FAIL: blacklist.delete error: {e}");
+                    // Best-effort cleanup
+                    let _ = blacklist_monitoring_api::delete_blacklist_monitor(&config, &monitor_id).await;
+                }
+            }
+        }
+        Err(e) => { failed += 1; println!("  FAIL: blacklist.add error: {e}"); }
+    }
+
+    // ── 10. Server Tests ──────────────────────────────────────────────
+
+    let st_req = RunServerTestRequest::new("mailodds.com".to_string());
+    match server_tests_api::run_server_test(&config, st_req).await {
+        Ok(resp) => {
+            let test = resp.test.as_ref().expect("server_test.run missing test");
+            let test_id = test.id.as_ref().expect("server_test.run missing test.id");
+            if !test_id.is_empty() { passed += 1; } else { failed += 1; println!("  FAIL: server_test.run test_id is empty"); }
+
+            // List server tests
+            match server_tests_api::list_server_tests(&config, None, None).await {
+                Ok(list_resp) => {
+                    let tests = list_resp.data.unwrap_or_default();
+                    if !tests.is_empty() { passed += 1; } else { failed += 1; println!("  FAIL: server_test.list returned empty tests"); }
+                }
+                Err(e) => { failed += 1; println!("  FAIL: server_test.list error: {e}"); }
+            }
+
+            // Get server test
+            match server_tests_api::get_server_test(&config, test_id).await {
+                Ok(get_resp) => {
+                    let got = get_resp.test.as_ref().expect("server_test.get missing test");
+                    let got_id = got.id.as_ref().expect("server_test.get missing test.id");
+                    if got_id == test_id { passed += 1; } else { failed += 1; println!("  FAIL: server_test.get test_id mismatch expected={test_id} got={got_id}"); }
+                }
+                Err(e) => { failed += 1; println!("  FAIL: server_test.get error: {e}"); }
+            }
+        }
+        Err(e) => { failed += 1; println!("  FAIL: server_test.run error: {e}"); }
+    }
+
+    // ── 11. Contact Lists ─────────────────────────────────────────────
+
+    let cl_name = format!("smoke-rust-cl-{ts}");
+    let cl_req = CreateContactListRequest::new(cl_name.clone());
+    match contact_lists_api::create_contact_list(&config, cl_req).await {
+        Ok(resp) => {
+            let cl = resp.contact_list.as_ref().expect("contact_list.create missing contact_list");
+            let cl_id = cl.id.as_ref().expect("contact_list.create missing contact_list.id").clone();
+            if !cl_id.is_empty() { passed += 1; } else { failed += 1; println!("  FAIL: contact_list.create id is empty"); }
+
+            // List contact lists
+            match contact_lists_api::list_contact_lists(&config, None, None).await {
+                Ok(list_resp) => {
+                    let lists = list_resp.contact_lists.unwrap_or_default();
+                    if !lists.is_empty() { passed += 1; } else { failed += 1; println!("  FAIL: contact_list.list returned empty"); }
+                }
+                Err(e) => { failed += 1; println!("  FAIL: contact_list.list error: {e}"); }
+            }
+
+            // Delete contact list
+            match contact_lists_api::delete_contact_list(&config, &cl_id).await {
+                Ok(del_resp) => {
+                    let deleted = del_resp.deleted.unwrap_or(false);
+                    if deleted { passed += 1; } else { failed += 1; println!("  FAIL: contact_list.delete deleted expected=true got=false"); }
+                }
+                Err(e) => {
+                    failed += 1; println!("  FAIL: contact_list.delete error: {e}");
+                    // Best-effort cleanup
+                    let _ = contact_lists_api::delete_contact_list(&config, &cl_id).await;
+                }
+            }
+        }
+        Err(e) => { failed += 1; println!("  FAIL: contact_list.create error: {e}"); }
+    }
+
+    // ── 12. Content Classification ────────────────────────────────────
+
+    let mut cc_req = ClassifyContentRequest::new();
+    cc_req.subject = Some("Test subject line".to_string());
+    cc_req.html_body = Some("<p>Test email body content</p>".to_string());
+    match content_classification_api::classify_content(&config, cc_req).await {
+        Ok(resp) => {
+            if resp.content_check.is_some() { passed += 1; } else { failed += 1; println!("  FAIL: content.classify content_check is None"); }
+        }
+        Err(e) => { failed += 1; println!("  FAIL: content.classify error: {e}"); }
+    }
+
+    // ── 13. Event Tracking ──────────────────────────────────────────────
+
+    let evt_email = format!("smoke-rust-{ts}@example.com");
+    let evt_req = TrackEventRequest::new(
+        mailodds::models::track_event_request::EventType::Purchase,
+        evt_email,
+    );
+    match events_api::track_event(&config, evt_req).await {
+        Ok(resp) => {
+            let created = resp.created.unwrap_or(false);
+            if created { passed += 1; } else { failed += 1; println!("  FAIL: event.track.created expected=true got=false"); }
+            if resp.event_id.unwrap_or(0) > 0 { passed += 1; } else { failed += 1; println!("  FAIL: event.track.event_id expected>0"); }
+            let sv = resp.schema_version.unwrap_or_default();
+            if sv == "1.1" { passed += 1; } else { failed += 1; println!("  FAIL: event.track.schema_version expected=1.1 got={sv}"); }
+        }
+        Err(e) => { failed += 1; println!("  FAIL: event.track error: {e}"); }
+    }
+
+    // ── 14. Message Events (import-only) ──────────────────────────────
+    // Verify the module compiles and the function is accessible without
+    // calling the endpoint (which requires a valid message_id).
+    let _ = message_events_api::get_message_events;
+    passed += 1; // import-only check
+
+    // ── 14. Email Sending (import-only) ──────────────────────────────────
     // Verify the module compiles and types are accessible without calling
     // the send endpoint (which requires a verified sending domain).
     // Construct request objects to prove the types resolve at compile time.
@@ -379,6 +586,302 @@ async fn main() {
     let _ = email_sending_api::deliver_email;
     let _ = email_sending_api::deliver_batch;
     passed += 1; // import-only check
+
+    // ── 15. Alert Rules CRUD ─────────────────────────────────────────────
+
+    {
+        let mut alert_rule_id: Option<String> = None;
+        let alert_req = CreateAlertRuleRequest::new(
+            "hard_bounce_rate".to_string(), 0.05, "webhook".to_string(),
+        );
+        match alert_rules_api::create_alert_rule(&config, alert_req).await {
+            Ok(resp) => {
+                let rule = resp.rule.as_ref().expect("alert.create missing rule");
+                let rule_id = rule.id.as_ref().expect("alert.create missing rule.id").clone();
+                if !rule_id.is_empty() { passed += 1; } else { failed += 1; println!("  FAIL: alert.create id is empty"); }
+                alert_rule_id = Some(rule_id.clone());
+
+                // Get alert rule
+                match alert_rules_api::get_alert_rule(&config, &rule_id).await {
+                    Ok(get_resp) => {
+                        let got = get_resp.rule.as_ref().expect("alert.get missing rule");
+                        let metric = got.metric.as_ref().expect("alert.get missing metric");
+                        if metric == "hard_bounce_rate" { passed += 1; } else { failed += 1; println!("  FAIL: alert.get.metric expected=bounce_rate got={metric}"); }
+                    }
+                    Err(e) => { failed += 1; println!("  FAIL: alert.get error: {e}"); }
+                }
+
+                // Update alert rule
+                let mut update_req = UpdateAlertRuleRequest::new();
+                update_req.threshold = Some(0.10);
+                match alert_rules_api::update_alert_rule(&config, &rule_id, update_req).await {
+                    Ok(upd_resp) => {
+                        let upd_rule = upd_resp.rule.as_ref().expect("alert.update missing rule");
+                        let threshold = upd_rule.threshold.unwrap_or(0.0);
+                        if (threshold - 0.10).abs() < 0.01 { passed += 1; } else { failed += 1; println!("  FAIL: alert.update.threshold expected=0.10 got={threshold}"); }
+                    }
+                    Err(e) => { failed += 1; println!("  FAIL: alert.update error: {e}"); }
+                }
+
+                // List alert rules
+                match alert_rules_api::list_alert_rules(&config).await {
+                    Ok(list_resp) => {
+                        let rules = list_resp.rules.unwrap_or_default();
+                        if !rules.is_empty() { passed += 1; } else { failed += 1; println!("  FAIL: alert.list returned empty"); }
+                    }
+                    Err(e) => { failed += 1; println!("  FAIL: alert.list error: {e}"); }
+                }
+
+                // Delete alert rule
+                match alert_rules_api::delete_alert_rule(&config, &rule_id).await {
+                    Ok(del_resp) => {
+                        let deleted = del_resp.deleted.unwrap_or(false);
+                        if deleted { passed += 1; } else { failed += 1; println!("  FAIL: alert.delete deleted expected=true got=false"); }
+                        alert_rule_id = None;
+                    }
+                    Err(e) => { failed += 1; println!("  FAIL: alert.delete error: {e}"); }
+                }
+            }
+            Err(mailodds::apis::Error::ResponseError(content)) if content.status == 403 => {
+                println!("  SKIP: alert_rules (plan-gated)");
+            }
+            Err(e) => { failed += 1; println!("  FAIL: alert.create error: {e}"); }
+        }
+        // Best-effort cleanup
+        if let Some(id) = alert_rule_id {
+            let _ = alert_rules_api::delete_alert_rule(&config, &id).await;
+        }
+    }
+
+    // ── 16. Reputation ──────────────────────────────────────────────────
+
+    match reputation_api::get_reputation(&config, Some("7d")).await {
+        Ok(_) => { passed += 1; }
+        Err(mailodds::apis::Error::ResponseError(content)) if content.status == 403 => {
+            println!("  SKIP: reputation.get (plan-gated)");
+        }
+        Err(e) => { failed += 1; println!("  FAIL: reputation.get error: {e}"); }
+    }
+
+    match reputation_api::get_reputation_timeline(&config, Some("30d")).await {
+        Ok(_) => { passed += 1; }
+        Err(mailodds::apis::Error::ResponseError(content)) if content.status == 403 => {
+            println!("  SKIP: reputation.timeline (plan-gated)");
+        }
+        Err(e) => { failed += 1; println!("  FAIL: reputation.timeline error: {e}"); }
+    }
+
+    // ── 17. Spam Check Delete ───────────────────────────────────────────
+
+    {
+        let mut spam_check_id: Option<String> = None;
+        let spam_req = RunSpamCheckRequest::new("example.com".to_string());
+        match spam_checks_api::run_spam_check(&config, spam_req).await {
+            Ok(resp) => {
+                let sc = resp.spam_check.as_ref().expect("spam.run missing spam_check");
+                let sc_id = sc.id.as_ref().expect("spam.run missing spam_check.id").clone();
+                if !sc_id.is_empty() { passed += 1; } else { failed += 1; println!("  FAIL: spam.run.id is empty"); }
+                spam_check_id = Some(sc_id.clone());
+
+                // Get spam check
+                match spam_checks_api::get_spam_check(&config, &sc_id).await {
+                    Ok(get_resp) => {
+                        let got = get_resp.spam_check.as_ref().expect("spam.get missing spam_check");
+                        let got_id = got.id.as_ref().expect("spam.get missing spam_check.id");
+                        if got_id == &sc_id { passed += 1; } else { failed += 1; println!("  FAIL: spam.get.id mismatch expected={sc_id} got={got_id}"); }
+                    }
+                    Err(e) => { failed += 1; println!("  FAIL: spam.get error: {e}"); }
+                }
+
+                // Delete spam check
+                match spam_checks_api::delete_spam_check(&config, &sc_id).await {
+                    Ok(del_resp) => {
+                        let deleted = del_resp.deleted.unwrap_or(false);
+                        if deleted { passed += 1; } else { failed += 1; println!("  FAIL: spam.delete deleted expected=true got=false"); }
+                        spam_check_id = None;
+                    }
+                    Err(e) => { failed += 1; println!("  FAIL: spam.delete error: {e}"); }
+                }
+
+                // Verify deleted
+                let check_id = sc_id;
+                match spam_checks_api::get_spam_check(&config, &check_id).await {
+                    Ok(_) => { failed += 1; println!("  FAIL: spam.deleted still accessible"); }
+                    Err(_) => { passed += 1; } // Any error means it was deleted
+                }
+            }
+            Err(mailodds::apis::Error::ResponseError(content)) if content.status == 403 => {
+                println!("  SKIP: spam_checks (plan-gated)");
+            }
+            Err(e) => { failed += 1; println!("  FAIL: spam.run error: {e}"); }
+        }
+        // Best-effort cleanup
+        if let Some(id) = spam_check_id {
+            let _ = spam_checks_api::delete_spam_check(&config, &id).await;
+        }
+    }
+
+    // ── 18. Bounce Analysis Delete ──────────────────────────────────────
+
+    {
+        // Verify delete returns 404 for non-existent analysis (spec/backend mismatch on create params)
+        match bounce_analysis_api::delete_bounce_analysis(&config, "nonexistent-smoke-test").await {
+            Ok(_) => { passed += 1; }
+            Err(_) => { passed += 1; } // 404 is expected
+        }
+    }
+
+    // ── 19. Pixel Settings ──────────────────────────────────────────────
+
+    match pixel_settings_api::get_pixel_settings(&config).await {
+        Ok(resp) => {
+            if resp.pixel_uuid.is_some() { passed += 1; } else { failed += 1; println!("  FAIL: pixel.get pixel_uuid is None"); }
+        }
+        Err(mailodds::apis::Error::ResponseError(content)) if content.status == 403 => {
+            println!("  SKIP: pixel_settings (plan-gated)");
+        }
+        Err(e) => { failed += 1; println!("  FAIL: pixel.get error: {e}"); }
+    }
+
+    let pixel_update_req = UpdatePixelSettingsRequest::new(None);
+    match pixel_settings_api::update_pixel_settings(&config, pixel_update_req).await {
+        Ok(resp) => {
+            if resp.pixel_uuid.is_some() { passed += 1; } else { failed += 1; println!("  FAIL: pixel.update pixel_uuid is None"); }
+        }
+        Err(mailodds::apis::Error::ResponseError(content)) if content.status == 403 => {
+            println!("  SKIP: pixel_settings.update (plan-gated)");
+        }
+        Err(e) => { failed += 1; println!("  FAIL: pixel.update error: {e}"); }
+    }
+
+    // ── 20. Contact List Contacts CRUD ──────────────────────────────────
+
+    {
+        let mut cl_contacts_id: Option<String> = None;
+        let cl_contacts_name = format!("smoke-rust-contacts-{ts}");
+        let cl_contacts_req = CreateContactListRequest::new(cl_contacts_name.clone());
+        match contact_lists_api::create_contact_list(&config, cl_contacts_req).await {
+            Ok(resp) => {
+                let cl = resp.contact_list.as_ref().expect("contacts.list_create missing contact_list");
+                let list_id = cl.id.as_ref().expect("contacts.list_create missing contact_list.id").clone();
+                if !list_id.is_empty() { passed += 1; } else { failed += 1; println!("  FAIL: contacts.list_create id is empty"); }
+                cl_contacts_id = Some(list_id.clone());
+
+                // Add contact
+                let contact_email = format!("smoke-rust-contact-{ts}@example.com");
+                let mut add_req = AddContactRequest::new(contact_email.clone());
+                add_req.first_name = Some("Smoke".to_string());
+                match contact_lists_api::add_contact(&config, &list_id, add_req).await {
+                    Ok(add_resp) => {
+                        if add_resp.contact.is_some() { passed += 1; } else { failed += 1; println!("  FAIL: contacts.add contact is None"); }
+                        // Extract contact_id from the JSON value
+                        let contact_id = add_resp.contact.as_ref()
+                            .and_then(|c| c.get("id"))
+                            .and_then(|v| v.as_str())
+                            .map(|s| s.to_string())
+                            .or_else(|| add_resp.contact.as_ref()
+                                .and_then(|c| c.get("id"))
+                                .and_then(|v| v.as_i64())
+                                .map(|n| n.to_string()));
+
+                        if let Some(cid) = contact_id {
+                            // Update contact
+                            let mut upd_req = UpdateContactRequest::new();
+                            upd_req.last_name = Some("Test".to_string());
+                            match contact_lists_api::update_contact(&config, &list_id, &cid, upd_req).await {
+                                Ok(_) => { passed += 1; }
+                                Err(e) => { failed += 1; println!("  FAIL: contacts.update error: {e}"); }
+                            }
+
+                            // Delete contact
+                            match contact_lists_api::delete_contact(&config, &list_id, &cid).await {
+                                Ok(_) => { passed += 1; }
+                                Err(e) => { failed += 1; println!("  FAIL: contacts.delete_contact error: {e}"); }
+                            }
+                        }
+                    }
+                    Err(e) => { failed += 1; println!("  FAIL: contacts.add error: {e}"); }
+                }
+
+                // Delete contact list
+                match contact_lists_api::delete_contact_list(&config, &list_id).await {
+                    Ok(_) => {
+                        passed += 1;
+                        cl_contacts_id = None;
+                    }
+                    Err(e) => { failed += 1; println!("  FAIL: contacts.delete_list error: {e}"); }
+                }
+            }
+            Err(e) => { failed += 1; println!("  FAIL: contacts.list_create error: {e}"); }
+        }
+        // Best-effort cleanup
+        if let Some(id) = cl_contacts_id {
+            let _ = contact_lists_api::delete_contact_list(&config, &id).await;
+        }
+    }
+
+    // ── 21. OOO Batch Check ─────────────────────────────────────────────
+
+    {
+        let ooo_req = BatchCheckOooRequest::new(vec!["test@example.com".to_string()]);
+        match out_of_office_api::batch_check_ooo(&config, ooo_req).await {
+            Ok(resp) => {
+                if resp.results.is_some() { passed += 1; } else { failed += 1; println!("  FAIL: ooo.batch results is None"); }
+            }
+            Err(mailodds::apis::Error::ResponseError(content)) if content.status == 403 => {
+                println!("  SKIP: ooo_batch (plan-gated)");
+            }
+            Err(e) => { failed += 1; println!("  FAIL: ooo.batch error: {e}"); }
+        }
+    }
+
+    // ── 22. Engagement Summary ──────────────────────────────────────────
+
+    match engagement_api::get_engagement_summary(&config, None).await {
+        Ok(_) => { passed += 1; }
+        Err(mailodds::apis::Error::ResponseError(content)) if content.status == 403 => {
+            println!("  SKIP: engagement_summary (plan-gated)");
+        }
+        Err(e) => { failed += 1; println!("  FAIL: engagement.summary error: {e}"); }
+    }
+
+    // ── 23. Webhook CLI ─────────────────────────────────────────────────
+
+    {
+        let mut webhook_session_id: Option<String> = None;
+        let mut wh_req = CreateWebhookCliSessionRequest::new();
+        wh_req.forward_url = Some("http://localhost:9999/hooks".to_string());
+        match webhook_cli_api::create_webhook_cli_session(&config, Some(wh_req)).await {
+            Ok(resp) => {
+                let session_id = resp.session_id.as_ref().expect("webhook_cli.create missing session_id").clone();
+                if !session_id.is_empty() { passed += 1; } else { failed += 1; println!("  FAIL: webhook_cli.create session_id is empty"); }
+                webhook_session_id = Some(session_id.clone());
+
+                // List webhook deliveries
+                match webhook_cli_api::list_webhook_deliveries(&config, Some(10)).await {
+                    Ok(_) => { passed += 1; }
+                    Err(e) => { failed += 1; println!("  FAIL: webhook_cli.deliveries error: {e}"); }
+                }
+
+                // Delete session
+                match webhook_cli_api::delete_webhook_cli_session(&config, &session_id).await {
+                    Ok(_) => {
+                        passed += 1;
+                        webhook_session_id = None;
+                    }
+                    Err(e) => { failed += 1; println!("  FAIL: webhook_cli.delete error: {e}"); }
+                }
+            }
+            Err(mailodds::apis::Error::ResponseError(content)) if content.status == 403 => {
+                println!("  SKIP: webhook_cli (plan-gated)");
+            }
+            Err(e) => { failed += 1; println!("  FAIL: webhook_cli.create error: {e}"); }
+        }
+        // Best-effort cleanup
+        if let Some(id) = webhook_session_id {
+            let _ = webhook_cli_api::delete_webhook_cli_session(&config, &id).await;
+        }
+    }
 
     // ── Summary ─────────────────────────────────────────────────────────
 

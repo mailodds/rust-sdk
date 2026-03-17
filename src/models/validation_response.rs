@@ -77,10 +77,10 @@ pub struct ValidationResponse {
     /// Whether the domain's MX IP is on a DNS blocklist (Spamhaus ZEN). Omitted for standard depth.
     #[serde(rename = "dnsbl_listed", skip_serializing_if = "Option::is_none")]
     pub dnsbl_listed: Option<bool>,
-    #[serde(rename = "suppression_match", skip_serializing_if = "Option::is_none")]
-    pub suppression_match: Option<Box<models::ValidationResponseSuppressionMatch>>,
-    #[serde(rename = "policy_applied", skip_serializing_if = "Option::is_none")]
-    pub policy_applied: Option<Box<models::ValidationResponsePolicyApplied>>,
+    #[serde(rename = "suppression_match", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    pub suppression_match: Option<Option<Box<models::ValidationResponseSuppressionMatch>>>,
+    #[serde(rename = "policy_applied", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    pub policy_applied: Option<Option<Box<models::ValidationResponsePolicyApplied>>>,
 }
 
 impl ValidationResponse {

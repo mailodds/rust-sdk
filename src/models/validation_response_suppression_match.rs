@@ -11,7 +11,7 @@
 use crate::models;
 use serde::{Deserialize, Serialize};
 
-/// ValidationResponseSuppressionMatch : Present only when email matched a suppression list entry.
+/// ValidationResponseSuppressionMatch : Present only when email matched a suppression list entry. Null otherwise.
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ValidationResponseSuppressionMatch {
     #[serde(rename = "match_type", skip_serializing_if = "Option::is_none")]
@@ -23,7 +23,7 @@ pub struct ValidationResponseSuppressionMatch {
 }
 
 impl ValidationResponseSuppressionMatch {
-    /// Present only when email matched a suppression list entry.
+    /// Present only when email matched a suppression list entry. Null otherwise.
     pub fn new() -> ValidationResponseSuppressionMatch {
         ValidationResponseSuppressionMatch {
             match_type: None,

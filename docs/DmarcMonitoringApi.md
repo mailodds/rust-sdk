@@ -5,6 +5,7 @@ All URIs are relative to *https://api.mailodds.com/v1*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**add_dmarc_domain**](DmarcMonitoringApi.md#add_dmarc_domain) | **POST** /v1/dmarc-domains | Add DMARC domain
+[**delete_dmarc_domain**](DmarcMonitoringApi.md#delete_dmarc_domain) | **DELETE** /v1/dmarc-domains/{domain_id} | Delete a DMARC domain
 [**get_dmarc_domain**](DmarcMonitoringApi.md#get_dmarc_domain) | **GET** /v1/dmarc-domains/{domain_id} | Get DMARC domain
 [**get_dmarc_recommendation**](DmarcMonitoringApi.md#get_dmarc_recommendation) | **GET** /v1/dmarc-domains/{domain_id}/recommendation | Get DMARC policy recommendation
 [**get_dmarc_sources**](DmarcMonitoringApi.md#get_dmarc_sources) | **GET** /v1/dmarc-domains/{domain_id}/sources | Get DMARC sending sources
@@ -39,6 +40,36 @@ Name | Type | Description  | Required | Notes
 ### HTTP request headers
 
 - **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## delete_dmarc_domain
+
+> models::DeletePolicyRule200Response delete_dmarc_domain(domain_id)
+Delete a DMARC domain
+
+Delete a DMARC domain and all its associated reports.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**domain_id** | **String** | DMARC domain UUID | [required] |
+
+### Return type
+
+[**models::DeletePolicyRule200Response**](deletePolicyRule_200_response.md)
+
+### Authorization
+
+[BearerAuth](../README.md#BearerAuth)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
 - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

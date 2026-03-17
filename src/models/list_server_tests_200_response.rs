@@ -17,8 +17,8 @@ pub struct ListServerTests200Response {
     pub schema_version: Option<String>,
     #[serde(rename = "request_id", skip_serializing_if = "Option::is_none")]
     pub request_id: Option<String>,
-    #[serde(rename = "tests", skip_serializing_if = "Option::is_none")]
-    pub tests: Option<Vec<models::ServerTest>>,
+    #[serde(rename = "data", skip_serializing_if = "Option::is_none")]
+    pub data: Option<Vec<models::ServerTest>>,
     #[serde(rename = "pagination", skip_serializing_if = "Option::is_none")]
     pub pagination: Option<Box<models::Pagination>>,
 }
@@ -28,7 +28,7 @@ impl ListServerTests200Response {
         ListServerTests200Response {
             schema_version: None,
             request_id: None,
-            tests: None,
+            data: None,
             pagination: None,
         }
     }

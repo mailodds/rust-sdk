@@ -111,6 +111,8 @@ impl From<&str> for ContentType {
     }
 }
 
+pub mod agent_control_plane_api;
+pub mod alert_rules_api;
 pub mod blacklist_monitoring_api;
 pub mod bounce_analysis_api;
 pub mod bulk_validation_api;
@@ -119,16 +121,27 @@ pub mod campaigns_api;
 pub mod contact_lists_api;
 pub mod content_classification_api;
 pub mod dmarc_monitoring_api;
+pub mod domain_insights_api;
 pub mod email_sending_api;
 pub mod email_validation_api;
+pub mod engagement_api;
+pub mod events_api;
+pub mod inbound_processing_api;
 pub mod message_events_api;
+pub mod o_auth20_api;
+pub mod out_of_office_api;
+pub mod pixel_settings_api;
+pub mod products_api;
+pub mod reputation_api;
 pub mod sender_health_api;
 pub mod sending_domains_api;
 pub mod server_tests_api;
 pub mod spam_checks_api;
+pub mod store_connections_api;
 pub mod subscriber_lists_api;
 pub mod suppression_lists_api;
 pub mod system_api;
 pub mod validation_policies_api;
+pub mod webhook_cli_api;
 
 pub mod configuration;

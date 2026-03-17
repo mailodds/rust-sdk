@@ -34,6 +34,16 @@ pub enum DeleteSendingDomainError {
     UnknownValue(serde_json::Value),
 }
 
+/// struct for typed errors of method [`get_reply_forwarding`]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum GetReplyForwardingError {
+    Status401(models::ErrorResponse),
+    Status403(models::ErrorResponse),
+    Status404(models::ErrorResponse),
+    UnknownValue(serde_json::Value),
+}
+
 /// struct for typed errors of method [`get_sending_domain`]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
@@ -67,6 +77,17 @@ pub enum GetSendingStatsError {
 pub enum ListSendingDomainsError {
     Status401(models::ErrorResponse),
     Status403(models::ErrorResponse),
+    UnknownValue(serde_json::Value),
+}
+
+/// struct for typed errors of method [`update_reply_forwarding`]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum UpdateReplyForwardingError {
+    Status400(models::ErrorResponse),
+    Status401(models::ErrorResponse),
+    Status403(models::ErrorResponse),
+    Status404(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -157,6 +178,46 @@ pub async fn delete_sending_domain(configuration: &configuration::Configuration,
     } else {
         let content = resp.text().await?;
         let entity: Option<DeleteSendingDomainError> = serde_json::from_str(&content).ok();
+        Err(Error::ResponseError(ResponseContent { status, content, entity }))
+    }
+}
+
+/// Get the reply forwarding configuration for a sending domain. Requires Growth+ plan.
+pub async fn get_reply_forwarding(configuration: &configuration::Configuration, domain_id: &str) -> Result<models::GetReplyForwarding200Response, Error<GetReplyForwardingError>> {
+    // add a prefix to parameters to efficiently prevent name collisions
+    let p_path_domain_id = domain_id;
+
+    let uri_str = format!("{}/v1/sending-domains/{domain_id}/reply-forwarding", configuration.base_path, domain_id=crate::apis::urlencode(p_path_domain_id));
+    let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
+
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+    }
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+
+    let req = req_builder.build()?;
+    let resp = configuration.client.execute(req).await?;
+
+    let status = resp.status();
+    let content_type = resp
+        .headers()
+        .get("content-type")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("application/octet-stream");
+    let content_type = super::ContentType::from(content_type);
+
+    if !status.is_client_error() && !status.is_server_error() {
+        let content = resp.text().await?;
+        match content_type {
+            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::GetReplyForwarding200Response`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::GetReplyForwarding200Response`")))),
+        }
+    } else {
+        let content = resp.text().await?;
+        let entity: Option<GetReplyForwardingError> = serde_json::from_str(&content).ok();
         Err(Error::ResponseError(ResponseContent { status, content, entity }))
     }
 }
@@ -322,6 +383,48 @@ pub async fn list_sending_domains(configuration: &configuration::Configuration, 
     } else {
         let content = resp.text().await?;
         let entity: Option<ListSendingDomainsError> = serde_json::from_str(&content).ok();
+        Err(Error::ResponseError(ResponseContent { status, content, entity }))
+    }
+}
+
+/// Configure reply forwarding for a sending domain. Set forward_replies_to to null to disable. Requires Growth+ plan.
+pub async fn update_reply_forwarding(configuration: &configuration::Configuration, domain_id: &str, update_reply_forwarding_request: models::UpdateReplyForwardingRequest) -> Result<models::GetReplyForwarding200Response, Error<UpdateReplyForwardingError>> {
+    // add a prefix to parameters to efficiently prevent name collisions
+    let p_path_domain_id = domain_id;
+    let p_body_update_reply_forwarding_request = update_reply_forwarding_request;
+
+    let uri_str = format!("{}/v1/sending-domains/{domain_id}/reply-forwarding", configuration.base_path, domain_id=crate::apis::urlencode(p_path_domain_id));
+    let mut req_builder = configuration.client.request(reqwest::Method::PATCH, &uri_str);
+
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+    }
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    req_builder = req_builder.json(&p_body_update_reply_forwarding_request);
+
+    let req = req_builder.build()?;
+    let resp = configuration.client.execute(req).await?;
+
+    let status = resp.status();
+    let content_type = resp
+        .headers()
+        .get("content-type")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("application/octet-stream");
+    let content_type = super::ContentType::from(content_type);
+
+    if !status.is_client_error() && !status.is_server_error() {
+        let content = resp.text().await?;
+        match content_type {
+            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::GetReplyForwarding200Response`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::GetReplyForwarding200Response`")))),
+        }
+    } else {
+        let content = resp.text().await?;
+        let entity: Option<UpdateReplyForwardingError> = serde_json::from_str(&content).ok();
         Err(Error::ResponseError(ResponseContent { status, content, entity }))
     }
 }

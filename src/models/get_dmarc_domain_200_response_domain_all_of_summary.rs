@@ -13,29 +13,32 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct GetDmarcDomain200ResponseDomainAllOfSummary {
-    #[serde(rename = "total_reports", skip_serializing_if = "Option::is_none")]
-    pub total_reports: Option<i32>,
-    #[serde(rename = "total_records", skip_serializing_if = "Option::is_none")]
-    pub total_records: Option<i32>,
+    #[serde(rename = "days", skip_serializing_if = "Option::is_none")]
+    pub days: Option<i32>,
+    #[serde(rename = "report_count", skip_serializing_if = "Option::is_none")]
+    pub report_count: Option<i32>,
+    #[serde(rename = "source_count", skip_serializing_if = "Option::is_none")]
+    pub source_count: Option<i32>,
+    #[serde(rename = "total_messages", skip_serializing_if = "Option::is_none")]
+    pub total_messages: Option<i32>,
+    #[serde(rename = "total_pass", skip_serializing_if = "Option::is_none")]
+    pub total_pass: Option<i32>,
+    #[serde(rename = "total_fail", skip_serializing_if = "Option::is_none")]
+    pub total_fail: Option<i32>,
     #[serde(rename = "pass_rate", skip_serializing_if = "Option::is_none")]
     pub pass_rate: Option<f64>,
-    #[serde(rename = "fail_rate", skip_serializing_if = "Option::is_none")]
-    pub fail_rate: Option<f64>,
-    #[serde(rename = "dkim_aligned", skip_serializing_if = "Option::is_none")]
-    pub dkim_aligned: Option<f64>,
-    #[serde(rename = "spf_aligned", skip_serializing_if = "Option::is_none")]
-    pub spf_aligned: Option<f64>,
 }
 
 impl GetDmarcDomain200ResponseDomainAllOfSummary {
     pub fn new() -> GetDmarcDomain200ResponseDomainAllOfSummary {
         GetDmarcDomain200ResponseDomainAllOfSummary {
-            total_reports: None,
-            total_records: None,
+            days: None,
+            report_count: None,
+            source_count: None,
+            total_messages: None,
+            total_pass: None,
+            total_fail: None,
             pass_rate: None,
-            fail_rate: None,
-            dkim_aligned: None,
-            spf_aligned: None,
         }
     }
 }

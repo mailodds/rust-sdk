@@ -5,6 +5,7 @@ All URIs are relative to *https://api.mailodds.com/v1*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**add_blacklist_monitor**](BlacklistMonitoringApi.md#add_blacklist_monitor) | **POST** /v1/blacklist-monitors | Add blacklist monitor
+[**delete_blacklist_monitor**](BlacklistMonitoringApi.md#delete_blacklist_monitor) | **DELETE** /v1/blacklist-monitors/{monitor_id} | Delete a blacklist monitor
 [**get_blacklist_history**](BlacklistMonitoringApi.md#get_blacklist_history) | **GET** /v1/blacklist-monitors/{monitor_id}/history | Get blacklist check history
 [**list_blacklist_monitors**](BlacklistMonitoringApi.md#list_blacklist_monitors) | **GET** /v1/blacklist-monitors | List blacklist monitors
 [**run_blacklist_check**](BlacklistMonitoringApi.md#run_blacklist_check) | **POST** /v1/blacklist-monitors/{monitor_id}/check | Run blacklist check
@@ -36,6 +37,36 @@ Name | Type | Description  | Required | Notes
 ### HTTP request headers
 
 - **Content-Type**: application/json
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## delete_blacklist_monitor
+
+> models::DeletePolicyRule200Response delete_blacklist_monitor(monitor_id)
+Delete a blacklist monitor
+
+Permanently remove a blacklist monitor and its check history.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**monitor_id** | **String** | Monitor UUID | [required] |
+
+### Return type
+
+[**models::DeletePolicyRule200Response**](deletePolicyRule_200_response.md)
+
+### Authorization
+
+[BearerAuth](../README.md#BearerAuth)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
 - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

@@ -13,32 +13,41 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct ClassifyContent200ResponseContentCheck {
-    /// Overall content quality score (0-100)
-    #[serde(rename = "score", skip_serializing_if = "Option::is_none")]
-    pub score: Option<f64>,
-    /// Overall verdict
-    #[serde(rename = "verdict", skip_serializing_if = "Option::is_none")]
-    pub verdict: Option<Verdict>,
-    #[serde(rename = "categories", skip_serializing_if = "Option::is_none")]
-    pub categories: Option<Vec<models::ClassifyContent200ResponseContentCheckCategoriesInner>>,
+    /// Overall content status
+    #[serde(rename = "status", skip_serializing_if = "Option::is_none")]
+    pub status: Option<Status>,
+    /// Whether the content is flagged
+    #[serde(rename = "flag", skip_serializing_if = "Option::is_none")]
+    pub flag: Option<bool>,
+    /// Human-readable reason for the status
+    #[serde(rename = "reason", skip_serializing_if = "Option::is_none")]
+    pub reason: Option<String>,
+    /// Priority level (1=lowest, 5=highest)
+    #[serde(rename = "priority", skip_serializing_if = "Option::is_none")]
+    pub priority: Option<i32>,
     /// Improvement suggestions
     #[serde(rename = "suggestions", skip_serializing_if = "Option::is_none")]
     pub suggestions: Option<Vec<String>>,
+    /// Classification duration in milliseconds
+    #[serde(rename = "duration_ms", skip_serializing_if = "Option::is_none")]
+    pub duration_ms: Option<i32>,
 }
 
 impl ClassifyContent200ResponseContentCheck {
     pub fn new() -> ClassifyContent200ResponseContentCheck {
         ClassifyContent200ResponseContentCheck {
-            score: None,
-            verdict: None,
-            categories: None,
+            status: None,
+            flag: None,
+            reason: None,
+            priority: None,
             suggestions: None,
+            duration_ms: None,
         }
     }
 }
-/// Overall verdict
+/// Overall content status
 #[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
-pub enum Verdict {
+pub enum Status {
     #[serde(rename = "clean")]
     Clean,
     #[serde(rename = "warning")]
@@ -47,8 +56,8 @@ pub enum Verdict {
     Risky,
 }
 
-impl Default for Verdict {
-    fn default() -> Verdict {
+impl Default for Status {
+    fn default() -> Status {
         Self::Clean
     }
 }

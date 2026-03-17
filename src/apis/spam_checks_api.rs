@@ -15,12 +15,20 @@ use crate::{apis::ResponseContent, models};
 use super::{Error, configuration, ContentType};
 
 
+/// struct for typed errors of method [`delete_spam_check`]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum DeleteSpamCheckError {
+    Status401(models::ErrorResponse),
+    Status404(models::ErrorResponse),
+    UnknownValue(serde_json::Value),
+}
+
 /// struct for typed errors of method [`get_spam_check`]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetSpamCheckError {
     Status401(models::ErrorResponse),
-    Status403(),
     Status404(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
@@ -30,7 +38,6 @@ pub enum GetSpamCheckError {
 #[serde(untagged)]
 pub enum ListSpamChecksError {
     Status401(models::ErrorResponse),
-    Status403(),
     UnknownValue(serde_json::Value),
 }
 
@@ -40,12 +47,51 @@ pub enum ListSpamChecksError {
 pub enum RunSpamCheckError {
     Status400(models::ErrorResponse),
     Status401(models::ErrorResponse),
-    Status403(),
     UnknownValue(serde_json::Value),
 }
 
 
-/// Get the detailed result of a specific spam check. Currently available to beta accounts only.
+/// Delete a spam check result.
+pub async fn delete_spam_check(configuration: &configuration::Configuration, check_id: &str) -> Result<models::DeletePolicyRule200Response, Error<DeleteSpamCheckError>> {
+    // add a prefix to parameters to efficiently prevent name collisions
+    let p_path_check_id = check_id;
+
+    let uri_str = format!("{}/v1/spam-checks/{check_id}", configuration.base_path, check_id=crate::apis::urlencode(p_path_check_id));
+    let mut req_builder = configuration.client.request(reqwest::Method::DELETE, &uri_str);
+
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+    }
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+
+    let req = req_builder.build()?;
+    let resp = configuration.client.execute(req).await?;
+
+    let status = resp.status();
+    let content_type = resp
+        .headers()
+        .get("content-type")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("application/octet-stream");
+    let content_type = super::ContentType::from(content_type);
+
+    if !status.is_client_error() && !status.is_server_error() {
+        let content = resp.text().await?;
+        match content_type {
+            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::DeletePolicyRule200Response`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::DeletePolicyRule200Response`")))),
+        }
+    } else {
+        let content = resp.text().await?;
+        let entity: Option<DeleteSpamCheckError> = serde_json::from_str(&content).ok();
+        Err(Error::ResponseError(ResponseContent { status, content, entity }))
+    }
+}
+
+/// Get the detailed result of a specific spam check.
 pub async fn get_spam_check(configuration: &configuration::Configuration, check_id: &str) -> Result<models::RunSpamCheck201Response, Error<GetSpamCheckError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_path_check_id = check_id;
@@ -85,7 +131,7 @@ pub async fn get_spam_check(configuration: &configuration::Configuration, check_
     }
 }
 
-/// List past spam check results with pagination. Currently available to beta accounts only.
+/// List past spam check results with pagination.
 pub async fn list_spam_checks(configuration: &configuration::Configuration, page: Option<i32>, per_page: Option<i32>) -> Result<models::ListSpamChecks200Response, Error<ListSpamChecksError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_query_page = page;
@@ -132,7 +178,7 @@ pub async fn list_spam_checks(configuration: &configuration::Configuration, page
     }
 }
 
-/// Run backend spam checks on email sending parameters. Checks domain reputation, link safety, and subject line quality. Currently available to beta accounts only.
+/// Run backend spam checks on email sending parameters. Checks domain reputation, link safety, and subject line quality.
 pub async fn run_spam_check(configuration: &configuration::Configuration, run_spam_check_request: models::RunSpamCheckRequest) -> Result<models::RunSpamCheck201Response, Error<RunSpamCheckError>> {
     // add a prefix to parameters to efficiently prevent name collisions
     let p_body_run_spam_check_request = run_spam_check_request;

@@ -13,7 +13,19 @@ use reqwest;
 use serde::{Deserialize, Serialize, de::Error as _};
 use crate::{apis::ResponseContent, models};
 use super::{Error, configuration, ContentType};
+use tokio::fs::File as TokioFile;
+use tokio_util::codec::{BytesCodec, FramedRead};
 
+
+/// struct for typed errors of method [`add_contact`]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum AddContactError {
+    Status400(models::ErrorResponse),
+    Status401(models::ErrorResponse),
+    Status404(models::ErrorResponse),
+    UnknownValue(serde_json::Value),
+}
 
 /// struct for typed errors of method [`append_to_contact_list`]
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -35,12 +47,49 @@ pub enum CreateContactListError {
     UnknownValue(serde_json::Value),
 }
 
+/// struct for typed errors of method [`delete_contact`]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum DeleteContactError {
+    Status401(models::ErrorResponse),
+    Status404(models::ErrorResponse),
+    UnknownValue(serde_json::Value),
+}
+
+/// struct for typed errors of method [`delete_contact_list`]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum DeleteContactListError {
+    Status401(models::ErrorResponse),
+    Status404(models::ErrorResponse),
+    UnknownValue(serde_json::Value),
+}
+
+/// struct for typed errors of method [`export_contact_list`]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum ExportContactListError {
+    Status401(models::ErrorResponse),
+    Status404(models::ErrorResponse),
+    UnknownValue(serde_json::Value),
+}
+
 /// struct for typed errors of method [`get_inactive_contacts_report`]
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetInactiveContactsReportError {
     Status401(models::ErrorResponse),
     Status403(models::ErrorResponse),
+    UnknownValue(serde_json::Value),
+}
+
+/// struct for typed errors of method [`import_contact_list`]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum ImportContactListError {
+    Status400(models::ErrorResponse),
+    Status401(models::ErrorResponse),
+    Status404(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -63,6 +112,58 @@ pub enum QueryContactListError {
     UnknownValue(serde_json::Value),
 }
 
+/// struct for typed errors of method [`update_contact`]
+#[derive(Debug, Clone, Serialize, Deserialize)]
+#[serde(untagged)]
+pub enum UpdateContactError {
+    Status400(models::ErrorResponse),
+    Status401(models::ErrorResponse),
+    Status404(models::ErrorResponse),
+    UnknownValue(serde_json::Value),
+}
+
+
+/// Add a single contact to a contact list.
+pub async fn add_contact(configuration: &configuration::Configuration, list_id: &str, add_contact_request: models::AddContactRequest) -> Result<models::AddContact201Response, Error<AddContactError>> {
+    // add a prefix to parameters to efficiently prevent name collisions
+    let p_path_list_id = list_id;
+    let p_body_add_contact_request = add_contact_request;
+
+    let uri_str = format!("{}/v1/contact-lists/{list_id}/contacts", configuration.base_path, list_id=crate::apis::urlencode(p_path_list_id));
+    let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
+
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+    }
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    req_builder = req_builder.json(&p_body_add_contact_request);
+
+    let req = req_builder.build()?;
+    let resp = configuration.client.execute(req).await?;
+
+    let status = resp.status();
+    let content_type = resp
+        .headers()
+        .get("content-type")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("application/octet-stream");
+    let content_type = super::ContentType::from(content_type);
+
+    if !status.is_client_error() && !status.is_server_error() {
+        let content = resp.text().await?;
+        match content_type {
+            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::AddContact201Response`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::AddContact201Response`")))),
+        }
+    } else {
+        let content = resp.text().await?;
+        let entity: Option<AddContactError> = serde_json::from_str(&content).ok();
+        Err(Error::ResponseError(ResponseContent { status, content, entity }))
+    }
+}
 
 /// Append validated emails from additional jobs to an existing contact list. Duplicates are automatically skipped.
 pub async fn append_to_contact_list(configuration: &configuration::Configuration, list_id: &str, append_to_contact_list_request: models::AppendToContactListRequest) -> Result<models::AppendToContactList200Response, Error<AppendToContactListError>> {
@@ -147,6 +248,127 @@ pub async fn create_contact_list(configuration: &configuration::Configuration, c
     }
 }
 
+/// Remove a single contact from a contact list.
+pub async fn delete_contact(configuration: &configuration::Configuration, list_id: &str, contact_id: &str) -> Result<models::DeletePolicyRule200Response, Error<DeleteContactError>> {
+    // add a prefix to parameters to efficiently prevent name collisions
+    let p_path_list_id = list_id;
+    let p_path_contact_id = contact_id;
+
+    let uri_str = format!("{}/v1/contact-lists/{list_id}/contacts/{contact_id}", configuration.base_path, list_id=crate::apis::urlencode(p_path_list_id), contact_id=crate::apis::urlencode(p_path_contact_id));
+    let mut req_builder = configuration.client.request(reqwest::Method::DELETE, &uri_str);
+
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+    }
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+
+    let req = req_builder.build()?;
+    let resp = configuration.client.execute(req).await?;
+
+    let status = resp.status();
+    let content_type = resp
+        .headers()
+        .get("content-type")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("application/octet-stream");
+    let content_type = super::ContentType::from(content_type);
+
+    if !status.is_client_error() && !status.is_server_error() {
+        let content = resp.text().await?;
+        match content_type {
+            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::DeletePolicyRule200Response`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::DeletePolicyRule200Response`")))),
+        }
+    } else {
+        let content = resp.text().await?;
+        let entity: Option<DeleteContactError> = serde_json::from_str(&content).ok();
+        Err(Error::ResponseError(ResponseContent { status, content, entity }))
+    }
+}
+
+/// Permanently delete a contact list and all its entries.
+pub async fn delete_contact_list(configuration: &configuration::Configuration, list_id: &str) -> Result<models::DeletePolicyRule200Response, Error<DeleteContactListError>> {
+    // add a prefix to parameters to efficiently prevent name collisions
+    let p_path_list_id = list_id;
+
+    let uri_str = format!("{}/v1/contact-lists/{list_id}", configuration.base_path, list_id=crate::apis::urlencode(p_path_list_id));
+    let mut req_builder = configuration.client.request(reqwest::Method::DELETE, &uri_str);
+
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+    }
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+
+    let req = req_builder.build()?;
+    let resp = configuration.client.execute(req).await?;
+
+    let status = resp.status();
+    let content_type = resp
+        .headers()
+        .get("content-type")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("application/octet-stream");
+    let content_type = super::ContentType::from(content_type);
+
+    if !status.is_client_error() && !status.is_server_error() {
+        let content = resp.text().await?;
+        match content_type {
+            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::DeletePolicyRule200Response`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::DeletePolicyRule200Response`")))),
+        }
+    } else {
+        let content = resp.text().await?;
+        let entity: Option<DeleteContactListError> = serde_json::from_str(&content).ok();
+        Err(Error::ResponseError(ResponseContent { status, content, entity }))
+    }
+}
+
+/// Export a contact list as CSV.
+pub async fn export_contact_list(configuration: &configuration::Configuration, list_id: &str) -> Result<String, Error<ExportContactListError>> {
+    // add a prefix to parameters to efficiently prevent name collisions
+    let p_path_list_id = list_id;
+
+    let uri_str = format!("{}/v1/contact-lists/{list_id}/export", configuration.base_path, list_id=crate::apis::urlencode(p_path_list_id));
+    let mut req_builder = configuration.client.request(reqwest::Method::GET, &uri_str);
+
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+    }
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+
+    let req = req_builder.build()?;
+    let resp = configuration.client.execute(req).await?;
+
+    let status = resp.status();
+    let content_type = resp
+        .headers()
+        .get("content-type")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("application/octet-stream");
+    let content_type = super::ContentType::from(content_type);
+
+    if !status.is_client_error() && !status.is_server_error() {
+        let content = resp.text().await?;
+        match content_type {
+            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `String`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `String`")))),
+        }
+    } else {
+        let content = resp.text().await?;
+        let entity: Option<ExportContactListError> = serde_json::from_str(&content).ok();
+        Err(Error::ResponseError(ResponseContent { status, content, entity }))
+    }
+}
+
 /// Get a report of contacts across all lists with no engagement activity (opens, clicks) in the specified period.
 pub async fn get_inactive_contacts_report(configuration: &configuration::Configuration, days: Option<i32>) -> Result<models::GetInactiveContactsReport200Response, Error<GetInactiveContactsReportError>> {
     // add a prefix to parameters to efficiently prevent name collisions
@@ -186,6 +408,66 @@ pub async fn get_inactive_contacts_report(configuration: &configuration::Configu
     } else {
         let content = resp.text().await?;
         let entity: Option<GetInactiveContactsReportError> = serde_json::from_str(&content).ok();
+        Err(Error::ResponseError(ResponseContent { status, content, entity }))
+    }
+}
+
+/// Import contacts into a list from a CSV file (max 10MB).
+pub async fn import_contact_list(configuration: &configuration::Configuration, list_id: &str, file: std::path::PathBuf, column_mapping: Option<&str>, consent_source: Option<&str>, tags: Option<&str>) -> Result<models::ImportContactList200Response, Error<ImportContactListError>> {
+    // add a prefix to parameters to efficiently prevent name collisions
+    let p_path_list_id = list_id;
+    let p_form_file = file;
+    let p_form_column_mapping = column_mapping;
+    let p_form_consent_source = consent_source;
+    let p_form_tags = tags;
+
+    let uri_str = format!("{}/v1/contact-lists/{list_id}/import", configuration.base_path, list_id=crate::apis::urlencode(p_path_list_id));
+    let mut req_builder = configuration.client.request(reqwest::Method::POST, &uri_str);
+
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+    }
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    let mut multipart_form = reqwest::multipart::Form::new();
+    let file = TokioFile::open(&p_form_file).await?;
+    let stream = FramedRead::new(file, BytesCodec::new());
+    let file_name = p_form_file.file_name().map(|n| n.to_string_lossy().to_string()).unwrap_or_default();
+    let file_part = reqwest::multipart::Part::stream(reqwest::Body::wrap_stream(stream)).file_name(file_name);
+    multipart_form = multipart_form.part("file", file_part);
+    if let Some(param_value) = p_form_column_mapping {
+        multipart_form = multipart_form.text("column_mapping", param_value.to_string());
+    }
+    if let Some(param_value) = p_form_consent_source {
+        multipart_form = multipart_form.text("consent_source", param_value.to_string());
+    }
+    if let Some(param_value) = p_form_tags {
+        multipart_form = multipart_form.text("tags", param_value.to_string());
+    }
+    req_builder = req_builder.multipart(multipart_form);
+
+    let req = req_builder.build()?;
+    let resp = configuration.client.execute(req).await?;
+
+    let status = resp.status();
+    let content_type = resp
+        .headers()
+        .get("content-type")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("application/octet-stream");
+    let content_type = super::ContentType::from(content_type);
+
+    if !status.is_client_error() && !status.is_server_error() {
+        let content = resp.text().await?;
+        match content_type {
+            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::ImportContactList200Response`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::ImportContactList200Response`")))),
+        }
+    } else {
+        let content = resp.text().await?;
+        let entity: Option<ImportContactListError> = serde_json::from_str(&content).ok();
         Err(Error::ResponseError(ResponseContent { status, content, entity }))
     }
 }
@@ -275,6 +557,49 @@ pub async fn query_contact_list(configuration: &configuration::Configuration, li
     } else {
         let content = resp.text().await?;
         let entity: Option<QueryContactListError> = serde_json::from_str(&content).ok();
+        Err(Error::ResponseError(ResponseContent { status, content, entity }))
+    }
+}
+
+/// Update a single contact in a contact list.
+pub async fn update_contact(configuration: &configuration::Configuration, list_id: &str, contact_id: &str, update_contact_request: models::UpdateContactRequest) -> Result<models::AddContact201Response, Error<UpdateContactError>> {
+    // add a prefix to parameters to efficiently prevent name collisions
+    let p_path_list_id = list_id;
+    let p_path_contact_id = contact_id;
+    let p_body_update_contact_request = update_contact_request;
+
+    let uri_str = format!("{}/v1/contact-lists/{list_id}/contacts/{contact_id}", configuration.base_path, list_id=crate::apis::urlencode(p_path_list_id), contact_id=crate::apis::urlencode(p_path_contact_id));
+    let mut req_builder = configuration.client.request(reqwest::Method::PATCH, &uri_str);
+
+    if let Some(ref user_agent) = configuration.user_agent {
+        req_builder = req_builder.header(reqwest::header::USER_AGENT, user_agent.clone());
+    }
+    if let Some(ref token) = configuration.bearer_access_token {
+        req_builder = req_builder.bearer_auth(token.to_owned());
+    };
+    req_builder = req_builder.json(&p_body_update_contact_request);
+
+    let req = req_builder.build()?;
+    let resp = configuration.client.execute(req).await?;
+
+    let status = resp.status();
+    let content_type = resp
+        .headers()
+        .get("content-type")
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("application/octet-stream");
+    let content_type = super::ContentType::from(content_type);
+
+    if !status.is_client_error() && !status.is_server_error() {
+        let content = resp.text().await?;
+        match content_type {
+            ContentType::Json => serde_json::from_str(&content).map_err(Error::from),
+            ContentType::Text => return Err(Error::from(serde_json::Error::custom("Received `text/plain` content type response that cannot be converted to `models::AddContact201Response`"))),
+            ContentType::Unsupported(unknown_type) => return Err(Error::from(serde_json::Error::custom(format!("Received `{unknown_type}` content type response that cannot be converted to `models::AddContact201Response`")))),
+        }
+    } else {
+        let content = resp.text().await?;
+        let entity: Option<UpdateContactError> = serde_json::from_str(&content).ok();
         Err(Error::ResponseError(ResponseContent { status, content, entity }))
     }
 }

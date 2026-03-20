@@ -9,7 +9,7 @@ Name | Type | Description | Notes
 **subject** | **String** |  | 
 **html** | Option<**String**> |  | [optional]
 **text** | Option<**String**> |  | [optional]
-**domain_id** | **String** |  | 
+**domain_id** | Option<**String**> | Sending domain UUID. Optional -- auto-resolved from the from address, or falls back to primary domain. | [optional]
 **reply_to** | Option<**String**> |  | [optional]
 **headers** | Option<**serde_json::Value**> |  | [optional]
 **tags** | Option<**Vec<String>**> |  | [optional]

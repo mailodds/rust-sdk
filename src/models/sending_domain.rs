@@ -42,6 +42,9 @@ pub struct SendingDomain {
     /// Reply forwarding address
     #[serde(rename = "forward_replies_to", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub forward_replies_to: Option<Option<String>>,
+    /// Whether this is the account primary/default sending domain
+    #[serde(rename = "is_primary", skip_serializing_if = "Option::is_none")]
+    pub is_primary: Option<bool>,
     #[serde(rename = "created_at", skip_serializing_if = "Option::is_none")]
     pub created_at: Option<String>,
     #[serde(rename = "updated_at", skip_serializing_if = "Option::is_none")]
@@ -61,6 +64,7 @@ impl SendingDomain {
             bimi_vmc_url: None,
             bimi_enabled: None,
             forward_replies_to: None,
+            is_primary: None,
             created_at: None,
             updated_at: None,
         }

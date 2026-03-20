@@ -589,13 +589,11 @@ async fn main() {
         vec![],
         "sender@example.com".to_string(),
         "subject".to_string(),
-        "domain-id".to_string(),
     );
     let _batch_req = mailodds::models::BatchDeliverRequest::new(
         vec![],
         "sender@example.com".to_string(),
         "subject".to_string(),
-        "domain-id".to_string(),
     );
     // Reference the module to prove it compiles (suppresses unused import warning).
     let _ = email_sending_api::deliver_email;

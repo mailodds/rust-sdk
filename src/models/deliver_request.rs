@@ -28,9 +28,9 @@ pub struct DeliverRequest {
     /// Plain text email body
     #[serde(rename = "text", skip_serializing_if = "Option::is_none")]
     pub text: Option<String>,
-    /// Sending domain UUID
-    #[serde(rename = "domain_id")]
-    pub domain_id: String,
+    /// Sending domain UUID. Optional -- auto-resolved from the from address, or falls back to primary domain.
+    #[serde(rename = "domain_id", skip_serializing_if = "Option::is_none")]
+    pub domain_id: Option<String>,
     /// Reply-to address
     #[serde(rename = "reply_to", skip_serializing_if = "Option::is_none")]
     pub reply_to: Option<String>,
@@ -59,14 +59,14 @@ pub struct DeliverRequest {
 }
 
 impl DeliverRequest {
-    pub fn new(to: Vec<models::DeliverRequestToInner>, from: String, subject: String, domain_id: String) -> DeliverRequest {
+    pub fn new(to: Vec<models::DeliverRequestToInner>, from: String, subject: String) -> DeliverRequest {
         DeliverRequest {
             to,
             from,
             subject,
             html: None,
             text: None,
-            domain_id,
+            domain_id: None,
             reply_to: None,
             headers: None,
             tags: None,

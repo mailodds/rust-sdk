@@ -9,7 +9,7 @@ Name | Type | Description | Notes
 **subject** | **String** | Email subject line | 
 **html** | Option<**String**> | HTML email body | [optional]
 **text** | Option<**String**> | Plain text email body | [optional]
-**domain_id** | **String** | Sending domain UUID | 
+**domain_id** | Option<**String**> | Sending domain UUID. Optional -- auto-resolved from the from address, or falls back to primary domain. | [optional]
 **reply_to** | Option<**String**> | Reply-to address | [optional]
 **headers** | Option<**serde_json::Value**> | Extra email headers | [optional]
 **tags** | Option<**Vec<String>**> | Tags for categorization | [optional]

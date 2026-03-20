@@ -11,6 +11,7 @@ Method | HTTP request | Description
 [**get_sending_domain_identity_score**](SendingDomainsApi.md#get_sending_domain_identity_score) | **GET** /v1/sending-domains/{domain_id}/identity-score | Get domain identity score
 [**get_sending_stats**](SendingDomainsApi.md#get_sending_stats) | **GET** /v1/sending-stats | Get sending statistics
 [**list_sending_domains**](SendingDomainsApi.md#list_sending_domains) | **GET** /v1/sending-domains | List sending domains
+[**set_primary_sending_domain**](SendingDomainsApi.md#set_primary_sending_domain) | **POST** /v1/sending-domains/{domain_id}/set-primary | Set primary sending domain
 [**update_reply_forwarding**](SendingDomainsApi.md#update_reply_forwarding) | **PATCH** /v1/sending-domains/{domain_id}/reply-forwarding | Update reply forwarding config
 [**verify_sending_domain**](SendingDomainsApi.md#verify_sending_domain) | **POST** /v1/sending-domains/{domain_id}/verify | Verify domain DNS records
 
@@ -211,6 +212,36 @@ This endpoint does not need any parameter.
 ### Return type
 
 [**models::ListSendingDomains200Response**](listSendingDomains_200_response.md)
+
+### Authorization
+
+[BearerAuth](../README.md#BearerAuth)
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## set_primary_sending_domain
+
+> models::CreateSendingDomain201Response set_primary_sending_domain(domain_id)
+Set primary sending domain
+
+Designate a domain as the primary/default sending domain. When domain_id is omitted from deliver calls, the primary domain is used automatically.
+
+### Parameters
+
+
+Name | Type | Description  | Required | Notes
+------------- | ------------- | ------------- | ------------- | -------------
+**domain_id** | **String** |  | [required] |
+
+### Return type
+
+[**models::CreateSendingDomain201Response**](createSendingDomain_201_response.md)
 
 ### Authorization
 

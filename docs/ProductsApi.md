@@ -23,7 +23,7 @@ Push up to 100 products to a custom platform store. Creates new products or upda
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**store_id** | **String** | Store connection UUID | [required] |
+**store_id** | **String** |  | [required] |
 **batch_products_request** | [**BatchProductsRequest**](BatchProductsRequest.md) |  | [required] |
 
 ### Return type
@@ -84,7 +84,7 @@ Get detailed information about a specific product.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**product_id** | **String** | Product UUID | [required] |
+**product_id** | **String** |  | [required] |
 
 ### Return type
 

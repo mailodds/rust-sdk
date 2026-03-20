@@ -16,34 +16,61 @@ pub struct Campaign {
     /// Campaign UUID
     #[serde(rename = "id")]
     pub id: String,
+    #[serde(rename = "account_id", skip_serializing_if = "Option::is_none")]
+    pub account_id: Option<i32>,
     /// Campaign name
     #[serde(rename = "name")]
     pub name: String,
     #[serde(rename = "status")]
     pub status: Status,
-    /// Target subscriber list UUID
-    #[serde(rename = "list_id")]
-    pub list_id: String,
     /// Sending domain UUID
     #[serde(rename = "domain_id")]
     pub domain_id: String,
-    #[serde(rename = "from_email")]
-    pub from_email: String,
-    #[serde(rename = "from_name", skip_serializing_if = "Option::is_none")]
-    pub from_name: Option<String>,
+    #[serde(rename = "subject", skip_serializing_if = "Option::is_none")]
+    pub subject: Option<String>,
+    /// Sender email address
+    #[serde(rename = "from_address")]
+    pub from_address: String,
     #[serde(rename = "reply_to", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub reply_to: Option<Option<String>>,
+    #[serde(rename = "html_body", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    pub html_body: Option<Option<String>>,
+    #[serde(rename = "text_body", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    pub text_body: Option<Option<String>>,
+    #[serde(rename = "html_body_dark", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    pub html_body_dark: Option<Option<String>>,
+    #[serde(rename = "text_body_dark", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    pub text_body_dark: Option<Option<String>>,
+    #[serde(rename = "campaign_type", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    pub campaign_type: Option<Option<String>>,
+    #[serde(rename = "auto_detect_schema", skip_serializing_if = "Option::is_none")]
+    pub auto_detect_schema: Option<bool>,
+    #[serde(rename = "promo_annotations", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    pub promo_annotations: Option<Option<serde_json::Value>>,
+    #[serde(rename = "throwaway_policy", skip_serializing_if = "Option::is_none")]
+    pub throwaway_policy: Option<String>,
     #[serde(rename = "scheduled_at", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
     pub scheduled_at: Option<Option<String>>,
-    #[serde(rename = "sent_at", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub sent_at: Option<Option<String>>,
-    #[serde(rename = "cancelled_at", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
-    pub cancelled_at: Option<Option<String>>,
-    /// Number of A/B variants
-    #[serde(rename = "variant_count", skip_serializing_if = "Option::is_none")]
-    pub variant_count: Option<i32>,
+    #[serde(rename = "started_at", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    pub started_at: Option<Option<String>>,
+    #[serde(rename = "completed_at", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    pub completed_at: Option<Option<String>>,
+    #[serde(rename = "recipient_count", skip_serializing_if = "Option::is_none")]
+    pub recipient_count: Option<i32>,
+    #[serde(rename = "is_ab_test", skip_serializing_if = "Option::is_none")]
+    pub is_ab_test: Option<bool>,
+    #[serde(rename = "winning_variant_id", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    pub winning_variant_id: Option<Option<String>>,
+    #[serde(rename = "ab_test_config", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    pub ab_test_config: Option<Option<serde_json::Value>>,
+    #[serde(rename = "error_message", default, with = "::serde_with::rust::double_option", skip_serializing_if = "Option::is_none")]
+    pub error_message: Option<Option<String>>,
     #[serde(rename = "stats", skip_serializing_if = "Option::is_none")]
     pub stats: Option<Box<models::CampaignStats>>,
+    #[serde(rename = "open_rate", skip_serializing_if = "Option::is_none")]
+    pub open_rate: Option<f64>,
+    #[serde(rename = "click_rate", skip_serializing_if = "Option::is_none")]
+    pub click_rate: Option<f64>,
     #[serde(rename = "created_at")]
     pub created_at: String,
     #[serde(rename = "updated_at", skip_serializing_if = "Option::is_none")]
@@ -51,21 +78,35 @@ pub struct Campaign {
 }
 
 impl Campaign {
-    pub fn new(id: String, name: String, status: Status, list_id: String, domain_id: String, from_email: String, created_at: String) -> Campaign {
+    pub fn new(id: String, name: String, status: Status, domain_id: String, from_address: String, created_at: String) -> Campaign {
         Campaign {
             id,
+            account_id: None,
             name,
             status,
-            list_id,
             domain_id,
-            from_email,
-            from_name: None,
+            subject: None,
+            from_address,
             reply_to: None,
+            html_body: None,
+            text_body: None,
+            html_body_dark: None,
+            text_body_dark: None,
+            campaign_type: None,
+            auto_detect_schema: None,
+            promo_annotations: None,
+            throwaway_policy: None,
             scheduled_at: None,
-            sent_at: None,
-            cancelled_at: None,
-            variant_count: None,
+            started_at: None,
+            completed_at: None,
+            recipient_count: None,
+            is_ab_test: None,
+            winning_variant_id: None,
+            ab_test_config: None,
+            error_message: None,
             stats: None,
+            open_rate: None,
+            click_rate: None,
             created_at,
             updated_at: None,
         }

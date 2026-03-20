@@ -607,7 +607,7 @@ async fn main() {
     {
         let mut alert_rule_id: Option<String> = None;
         let alert_req = CreateAlertRuleRequest::new(
-            "hard_bounce_rate".to_string(), 0.05, format!("https://smoke-{ts}.example.com/hook"),
+            "hard_bounce_rate".to_string(), 0.05, "webhook".to_string(),
         );
         match alert_rules_api::create_alert_rule(&config, alert_req).await {
             Ok(resp) => {

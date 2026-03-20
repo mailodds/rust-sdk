@@ -19,8 +19,8 @@ use super::{Error, configuration, ContentType};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetSenderHealthError {
-    Status401(models::ErrorResponse),
     Status403(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -28,8 +28,8 @@ pub enum GetSenderHealthError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetSenderHealthTrendError {
-    Status401(models::ErrorResponse),
     Status403(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 

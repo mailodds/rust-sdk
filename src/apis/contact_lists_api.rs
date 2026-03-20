@@ -21,9 +21,9 @@ use tokio_util::codec::{BytesCodec, FramedRead};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum AddContactError {
+    Status404(models::ErrorResponse),
     Status400(models::ErrorResponse),
     Status401(models::ErrorResponse),
-    Status404(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -31,9 +31,9 @@ pub enum AddContactError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum AppendToContactListError {
+    Status404(models::ErrorResponse),
     Status400(models::ErrorResponse),
     Status401(models::ErrorResponse),
-    Status404(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -41,9 +41,9 @@ pub enum AppendToContactListError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum CreateContactListError {
+    Status403(models::ErrorResponse),
     Status400(models::ErrorResponse),
     Status401(models::ErrorResponse),
-    Status403(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -51,8 +51,8 @@ pub enum CreateContactListError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum DeleteContactError {
-    Status401(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -60,8 +60,8 @@ pub enum DeleteContactError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum DeleteContactListError {
-    Status401(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -69,8 +69,8 @@ pub enum DeleteContactListError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum ExportContactListError {
-    Status401(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -78,8 +78,8 @@ pub enum ExportContactListError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetInactiveContactsReportError {
-    Status401(models::ErrorResponse),
     Status403(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -87,9 +87,9 @@ pub enum GetInactiveContactsReportError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum ImportContactListError {
+    Status404(models::ErrorResponse),
     Status400(models::ErrorResponse),
     Status401(models::ErrorResponse),
-    Status404(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -97,8 +97,8 @@ pub enum ImportContactListError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum ListContactListsError {
-    Status401(models::ErrorResponse),
     Status403(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -106,9 +106,9 @@ pub enum ListContactListsError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum QueryContactListError {
+    Status404(models::ErrorResponse),
     Status400(models::ErrorResponse),
     Status401(models::ErrorResponse),
-    Status404(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -116,9 +116,9 @@ pub enum QueryContactListError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum UpdateContactError {
+    Status404(models::ErrorResponse),
     Status400(models::ErrorResponse),
     Status401(models::ErrorResponse),
-    Status404(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 

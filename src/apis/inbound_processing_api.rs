@@ -19,9 +19,10 @@ use super::{Error, configuration, ContentType};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum CorrectInboundMessageError {
-    Status401(models::ErrorResponse),
     Status403(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status400(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -29,8 +30,8 @@ pub enum CorrectInboundMessageError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetBounceStatsError {
-    Status401(models::ErrorResponse),
     Status403(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -38,8 +39,8 @@ pub enum GetBounceStatsError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetBounceStatsSummaryError {
-    Status401(models::ErrorResponse),
     Status403(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -47,8 +48,8 @@ pub enum GetBounceStatsSummaryError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetComplaintAssessmentError {
-    Status401(models::ErrorResponse),
     Status403(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -56,9 +57,9 @@ pub enum GetComplaintAssessmentError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetInboundMessageError {
-    Status401(models::ErrorResponse),
     Status403(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -66,8 +67,8 @@ pub enum GetInboundMessageError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum ListInboundMessagesError {
-    Status401(models::ErrorResponse),
     Status403(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 

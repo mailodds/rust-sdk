@@ -19,8 +19,8 @@ use super::{Error, configuration, ContentType};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum DeleteSpamCheckError {
-    Status401(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -28,8 +28,8 @@ pub enum DeleteSpamCheckError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetSpamCheckError {
-    Status401(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 

@@ -28,8 +28,8 @@ pub enum AddDmarcDomainError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum DeleteDmarcDomainError {
-    Status401(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -37,8 +37,8 @@ pub enum DeleteDmarcDomainError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetDmarcDomainError {
-    Status401(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -46,8 +46,8 @@ pub enum GetDmarcDomainError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetDmarcRecommendationError {
-    Status401(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -55,8 +55,8 @@ pub enum GetDmarcRecommendationError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetDmarcSourcesError {
-    Status401(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -64,8 +64,8 @@ pub enum GetDmarcSourcesError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetDmarcTrendError {
-    Status401(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -81,8 +81,8 @@ pub enum ListDmarcDomainsError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum VerifyDmarcDomainError {
-    Status401(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 

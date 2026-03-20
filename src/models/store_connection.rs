@@ -80,6 +80,8 @@ pub enum Platform {
     Shopify,
     #[serde(rename = "feed")]
     Feed,
+    #[serde(rename = "custom")]
+    Custom,
 }
 
 impl Default for Platform {

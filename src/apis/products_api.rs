@@ -19,9 +19,9 @@ use super::{Error, configuration, ContentType};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum BatchProductsError {
+    Status404(models::ErrorResponse),
     Status400(models::ErrorResponse),
     Status401(models::ErrorResponse),
-    Status404(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -38,8 +38,8 @@ pub enum BulkUpdateProductsError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetProductError {
-    Status401(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 

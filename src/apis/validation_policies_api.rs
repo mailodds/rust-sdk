@@ -19,10 +19,10 @@ use super::{Error, configuration, ContentType};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum AddPolicyRuleError {
-    Status400(models::ErrorResponse),
-    Status401(models::ErrorResponse),
     Status403(),
     Status404(),
+    Status400(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -30,9 +30,9 @@ pub enum AddPolicyRuleError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum CreatePolicyError {
+    Status403(),
     Status400(models::ErrorResponse),
     Status401(models::ErrorResponse),
-    Status403(),
     UnknownValue(serde_json::Value),
 }
 
@@ -49,8 +49,8 @@ pub enum CreatePolicyFromPresetError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum DeletePolicyError {
-    Status401(models::ErrorResponse),
     Status404(),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -58,8 +58,8 @@ pub enum DeletePolicyError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum DeletePolicyRuleError {
-    Status401(models::ErrorResponse),
     Status404(),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -67,8 +67,8 @@ pub enum DeletePolicyRuleError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetPolicyError {
-    Status401(models::ErrorResponse),
     Status404(),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -92,9 +92,9 @@ pub enum ListPoliciesError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum TestPolicyError {
+    Status404(),
     Status400(models::ErrorResponse),
     Status401(models::ErrorResponse),
-    Status404(),
     UnknownValue(serde_json::Value),
 }
 
@@ -102,9 +102,9 @@ pub enum TestPolicyError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum UpdatePolicyError {
+    Status404(),
     Status400(models::ErrorResponse),
     Status401(models::ErrorResponse),
-    Status404(),
     UnknownValue(serde_json::Value),
 }
 

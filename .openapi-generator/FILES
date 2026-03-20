@@ -102,6 +102,7 @@ docs/GetBlacklistHistory200ResponseChecksInner.md
 docs/GetBounceRecords200Response.md
 docs/GetBounceRecords200ResponseRecordsInner.md
 docs/GetBounceStats200Response.md
+docs/GetBounceStats200ResponseStats.md
 docs/GetBounceStatsSummary200Response.md
 docs/GetCampaignAbResults200Response.md
 docs/GetCampaignAbResults200ResponseVariantsInner.md
@@ -416,6 +417,7 @@ src/models/get_blacklist_history_200_response_checks_inner.rs
 src/models/get_bounce_records_200_response.rs
 src/models/get_bounce_records_200_response_records_inner.rs
 src/models/get_bounce_stats_200_response.rs
+src/models/get_bounce_stats_200_response_stats.rs
 src/models/get_bounce_stats_summary_200_response.rs
 src/models/get_campaign_ab_results_200_response.rs
 src/models/get_campaign_ab_results_200_response_variants_inner.rs

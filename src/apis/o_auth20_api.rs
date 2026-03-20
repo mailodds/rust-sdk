@@ -37,6 +37,7 @@ pub enum GetJwksError {
 #[serde(untagged)]
 pub enum IntrospectTokenError {
     Status401(),
+    Status400(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -52,6 +53,7 @@ pub enum OauthServerMetadataError {
 #[serde(untagged)]
 pub enum RevokeTokenError {
     Status401(),
+    Status400(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 

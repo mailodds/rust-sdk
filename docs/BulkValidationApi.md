@@ -307,7 +307,7 @@ Retry processing for a failed or cancelled validation job. Re-queues unprocessed
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**job_id** | **String** | Job ID | [required] |
+**job_id** | **String** |  | [required] |
 
 ### Return type
 

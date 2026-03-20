@@ -20,8 +20,8 @@ use super::{Error, configuration, ContentType};
 #[serde(untagged)]
 pub enum GetMessageEventsError {
     Status400(models::ErrorResponse),
-    Status401(models::ErrorResponse),
     Status403(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 

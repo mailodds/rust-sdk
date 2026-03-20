@@ -19,6 +19,7 @@ use super::{Error, configuration, ContentType};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum CreateWebhookCliSessionError {
+    Status400(models::ErrorResponse),
     Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
@@ -27,8 +28,8 @@ pub enum CreateWebhookCliSessionError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum DeleteWebhookCliSessionError {
-    Status401(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -44,8 +45,8 @@ pub enum ListWebhookDeliveriesError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum ReplayWebhookDeliveryError {
-    Status401(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 

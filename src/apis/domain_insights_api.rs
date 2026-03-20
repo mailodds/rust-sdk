@@ -19,9 +19,9 @@ use super::{Error, configuration, ContentType};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetDomainHookEffectivenessError {
-    Status401(models::ErrorResponse),
     Status403(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -29,9 +29,9 @@ pub enum GetDomainHookEffectivenessError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetDomainInsightsFunnelError {
-    Status401(models::ErrorResponse),
     Status403(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -39,9 +39,9 @@ pub enum GetDomainInsightsFunnelError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetDomainInsightsTrendsError {
-    Status401(models::ErrorResponse),
     Status403(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 

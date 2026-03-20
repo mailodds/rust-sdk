@@ -25,7 +25,7 @@ Submit a human correction for an inbound message classification. Requires Pro+ p
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**message_id** | **String** | Message ID | [required] |
+**message_id** | **String** |  | [required] |
 **correct_inbound_message_request** | [**CorrectInboundMessageRequest**](CorrectInboundMessageRequest.md) |  | [required] |
 
 ### Return type
@@ -150,7 +150,7 @@ Get a single inbound message with full body content. Requires Growth+ plan.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**message_id** | **String** | Message ID | [required] |
+**message_id** | **String** |  | [required] |
 
 ### Return type
 

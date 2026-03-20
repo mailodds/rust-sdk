@@ -11,33 +11,24 @@
 use crate::models;
 use serde::{Deserialize, Serialize};
 
-/// SendingDomainIdentityScoreBreakdown : Per-check scoring breakdown
+/// GetBounceStats200ResponseStats : Bounce statistics with time-series data
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
-pub struct SendingDomainIdentityScoreBreakdown {
-    #[serde(rename = "spf", skip_serializing_if = "Option::is_none")]
-    pub spf: Option<Box<models::IdentityScoreCheck>>,
-    #[serde(rename = "dkim", skip_serializing_if = "Option::is_none")]
-    pub dkim: Option<Box<models::IdentityScoreCheck>>,
-    #[serde(rename = "dmarc", skip_serializing_if = "Option::is_none")]
-    pub dmarc: Option<Box<models::IdentityScoreCheck>>,
-    #[serde(rename = "bounce", skip_serializing_if = "Option::is_none")]
-    pub bounce: Option<Box<models::IdentityScoreCheck>>,
-    #[serde(rename = "tracking", skip_serializing_if = "Option::is_none")]
-    pub tracking: Option<Box<models::IdentityScoreCheck>>,
-    #[serde(rename = "bimi", skip_serializing_if = "Option::is_none")]
-    pub bimi: Option<Box<models::IdentityScoreCheck>>,
+pub struct GetBounceStats200ResponseStats {
+    #[serde(rename = "period", skip_serializing_if = "Option::is_none")]
+    pub period: Option<String>,
+    #[serde(rename = "group_by", skip_serializing_if = "Option::is_none")]
+    pub group_by: Option<String>,
+    #[serde(rename = "data", skip_serializing_if = "Option::is_none")]
+    pub data: Option<Vec<serde_json::Value>>,
 }
 
-impl SendingDomainIdentityScoreBreakdown {
-    /// Per-check scoring breakdown
-    pub fn new() -> SendingDomainIdentityScoreBreakdown {
-        SendingDomainIdentityScoreBreakdown {
-            spf: None,
-            dkim: None,
-            dmarc: None,
-            bounce: None,
-            tracking: None,
-            bimi: None,
+impl GetBounceStats200ResponseStats {
+    /// Bounce statistics with time-series data
+    pub fn new() -> GetBounceStats200ResponseStats {
+        GetBounceStats200ResponseStats {
+            period: None,
+            group_by: None,
+            data: None,
         }
     }
 }

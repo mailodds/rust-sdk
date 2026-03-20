@@ -22,7 +22,7 @@ Get the detailed results of a specific server test.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**test_id** | **String** | Server test UUID | [required] |
+**test_id** | **String** |  | [required] |
 
 ### Return type
 

@@ -19,9 +19,9 @@ use super::{Error, configuration, ContentType};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum CreateAlertRuleError {
+    Status403(models::ErrorResponse),
     Status400(models::ErrorResponse),
     Status401(models::ErrorResponse),
-    Status403(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -29,9 +29,9 @@ pub enum CreateAlertRuleError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum DeleteAlertRuleError {
-    Status401(models::ErrorResponse),
     Status403(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -39,9 +39,9 @@ pub enum DeleteAlertRuleError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetAlertRuleError {
-    Status401(models::ErrorResponse),
     Status403(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -49,8 +49,8 @@ pub enum GetAlertRuleError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum ListAlertRulesError {
-    Status401(models::ErrorResponse),
     Status403(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -58,10 +58,10 @@ pub enum ListAlertRulesError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum UpdateAlertRuleError {
-    Status400(models::ErrorResponse),
-    Status401(models::ErrorResponse),
     Status403(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status400(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 

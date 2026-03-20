@@ -57,7 +57,7 @@ Get the engagement score for a specific email address. Requires Growth+ plan.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**email** | **String** | Email address | [required] |
+**email** | **String** |  | [required] |
 
 ### Return type
 

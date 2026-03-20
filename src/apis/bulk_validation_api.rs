@@ -22,8 +22,8 @@ use tokio_util::codec::{BytesCodec, FramedRead};
 #[serde(untagged)]
 pub enum CancelJobError {
     Status400(models::ErrorResponse),
-    Status401(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -58,8 +58,8 @@ pub enum CreateJobUploadError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum DeleteJobError {
-    Status401(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -67,8 +67,8 @@ pub enum DeleteJobError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetJobError {
-    Status401(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -76,8 +76,8 @@ pub enum GetJobError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetJobResultsError {
-    Status401(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -85,8 +85,9 @@ pub enum GetJobResultsError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetPresignedUploadError {
-    Status401(models::ErrorResponse),
     Status503(models::ErrorResponse),
+    Status400(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -103,8 +104,8 @@ pub enum ListJobsError {
 #[serde(untagged)]
 pub enum RetryJobError {
     Status400(models::ErrorResponse),
-    Status401(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 

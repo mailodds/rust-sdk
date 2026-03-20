@@ -57,7 +57,7 @@ Disconnect a store and deactivate its products. Products are retained but marked
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**store_id** | **String** | Store connection UUID | [required] |
+**store_id** | **String** |  | [required] |
 
 ### Return type
 
@@ -87,7 +87,7 @@ Get details of a specific store connection including sync status and product cou
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**store_id** | **String** | Store connection UUID | [required] |
+**store_id** | **String** |  | [required] |
 
 ### Return type
 
@@ -117,8 +117,8 @@ Get error details for a sync job.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**store_id** | **String** | Store ID | [required] |
-**job_id** | **String** | Sync job ID | [required] |
+**store_id** | **String** |  | [required] |
+**job_id** | **String** |  | [required] |
 **page** | Option<**i32**> |  |  |[default to 1]
 **per_page** | Option<**i32**> |  |  |[default to 50]
 
@@ -180,7 +180,7 @@ List sync job history for a store.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**store_id** | **String** | Store ID | [required] |
+**store_id** | **String** |  | [required] |
 **page** | Option<**i32**> |  |  |[default to 1]
 **per_page** | Option<**i32**> |  |  |[default to 20]
 
@@ -212,7 +212,7 @@ Trigger a manual product sync for a store. Supports idempotency via the Idempote
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**store_id** | **String** | Store connection UUID | [required] |
+**store_id** | **String** |  | [required] |
 **idempotency_key** | Option<**String**> | Idempotency key to prevent duplicate syncs (5 min TTL) |  |
 
 ### Return type
@@ -243,7 +243,7 @@ Update store settings such as name, sync interval, or credentials.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**store_id** | **String** | Store connection UUID | [required] |
+**store_id** | **String** |  | [required] |
 **update_store_request** | [**UpdateStoreRequest**](UpdateStoreRequest.md) |  | [required] |
 
 ### Return type

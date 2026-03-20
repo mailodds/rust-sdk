@@ -23,7 +23,7 @@ Delete a spam check result.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**check_id** | **String** | Spam check ID | [required] |
+**check_id** | **String** |  | [required] |
 
 ### Return type
 
@@ -53,7 +53,7 @@ Get the detailed result of a specific spam check.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**check_id** | **String** | Spam check UUID | [required] |
+**check_id** | **String** |  | [required] |
 
 ### Return type
 

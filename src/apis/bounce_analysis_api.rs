@@ -19,9 +19,9 @@ use super::{Error, configuration, ContentType};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum CreateBounceAnalysisError {
+    Status404(models::ErrorResponse),
     Status400(models::ErrorResponse),
     Status401(models::ErrorResponse),
-    Status404(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -29,8 +29,8 @@ pub enum CreateBounceAnalysisError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum CrossReferenceBouncesError {
-    Status401(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -38,8 +38,8 @@ pub enum CrossReferenceBouncesError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum DeleteBounceAnalysisError {
-    Status401(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -47,8 +47,8 @@ pub enum DeleteBounceAnalysisError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetBounceAnalysisError {
-    Status401(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 
@@ -56,8 +56,8 @@ pub enum GetBounceAnalysisError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum GetBounceRecordsError {
-    Status401(models::ErrorResponse),
     Status404(models::ErrorResponse),
+    Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 

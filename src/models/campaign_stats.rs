@@ -11,7 +11,7 @@
 use crate::models;
 use serde::{Deserialize, Serialize};
 
-/// CampaignStats : Delivery and engagement statistics. Present when the campaign has started sending.
+/// CampaignStats : Delivery and engagement statistics.
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct CampaignStats {
     #[serde(rename = "sent", skip_serializing_if = "Option::is_none")]
@@ -26,18 +26,16 @@ pub struct CampaignStats {
     pub bounced: Option<i32>,
     #[serde(rename = "unsubscribed", skip_serializing_if = "Option::is_none")]
     pub unsubscribed: Option<i32>,
-    #[serde(rename = "complained", skip_serializing_if = "Option::is_none")]
-    pub complained: Option<i32>,
-    #[serde(rename = "delivery_rate", skip_serializing_if = "Option::is_none")]
-    pub delivery_rate: Option<f64>,
-    #[serde(rename = "open_rate", skip_serializing_if = "Option::is_none")]
-    pub open_rate: Option<f64>,
-    #[serde(rename = "click_rate", skip_serializing_if = "Option::is_none")]
-    pub click_rate: Option<f64>,
+    #[serde(rename = "suppressed", skip_serializing_if = "Option::is_none")]
+    pub suppressed: Option<i32>,
+    #[serde(rename = "failed", skip_serializing_if = "Option::is_none")]
+    pub failed: Option<i32>,
+    #[serde(rename = "conversions", skip_serializing_if = "Option::is_none")]
+    pub conversions: Option<i32>,
 }
 
 impl CampaignStats {
-    /// Delivery and engagement statistics. Present when the campaign has started sending.
+    /// Delivery and engagement statistics.
     pub fn new() -> CampaignStats {
         CampaignStats {
             sent: None,
@@ -46,10 +44,9 @@ impl CampaignStats {
             clicked: None,
             bounced: None,
             unsubscribed: None,
-            complained: None,
-            delivery_rate: None,
-            open_rate: None,
-            click_rate: None,
+            suppressed: None,
+            failed: None,
+            conversions: None,
         }
     }
 }

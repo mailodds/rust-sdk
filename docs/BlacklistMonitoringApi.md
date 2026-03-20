@@ -54,7 +54,7 @@ Permanently remove a blacklist monitor and its check history.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**monitor_id** | **String** | Monitor UUID | [required] |
+**monitor_id** | **String** |  | [required] |
 
 ### Return type
 
@@ -84,7 +84,7 @@ Get the listing and delisting timeline for a monitored IP or domain.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**monitor_id** | **String** | Monitor UUID | [required] |
+**monitor_id** | **String** |  | [required] |
 **page** | Option<**i32**> |  |  |[default to 1]
 **per_page** | Option<**i32**> |  |  |[default to 20]
 
@@ -143,7 +143,7 @@ Run an on-demand DNSBL check for a monitored IP or domain.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**monitor_id** | **String** | Monitor UUID | [required] |
+**monitor_id** | **String** |  | [required] |
 
 ### Return type
 

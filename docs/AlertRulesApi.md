@@ -54,7 +54,7 @@ Delete an alert rule. Requires Growth+ plan.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**rule_id** | **String** | Alert rule ID | [required] |
+**rule_id** | **String** |  | [required] |
 
 ### Return type
 
@@ -84,7 +84,7 @@ Get a single alert rule by ID. Requires Growth+ plan.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**rule_id** | **String** | Alert rule ID | [required] |
+**rule_id** | **String** |  | [required] |
 
 ### Return type
 
@@ -141,7 +141,7 @@ Update an existing alert rule. Requires Growth+ plan.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**rule_id** | **String** | Alert rule ID | [required] |
+**rule_id** | **String** |  | [required] |
 **update_alert_rule_request** | [**UpdateAlertRuleRequest**](UpdateAlertRuleRequest.md) |  | [required] |
 
 ### Return type

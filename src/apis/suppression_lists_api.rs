@@ -28,6 +28,7 @@ pub enum AddSuppressionError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum CheckSuppressionError {
+    Status400(models::ErrorResponse),
     Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
@@ -60,6 +61,7 @@ pub enum ListSuppressionError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum RemoveSuppressionError {
+    Status400(models::ErrorResponse),
     Status401(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }

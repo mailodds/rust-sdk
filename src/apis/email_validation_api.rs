@@ -28,9 +28,9 @@ pub enum ValidateBatchError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum ValidateEmailError {
+    Status403(models::ErrorResponse),
     Status400(models::ErrorResponse),
     Status401(models::ErrorResponse),
-    Status403(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 

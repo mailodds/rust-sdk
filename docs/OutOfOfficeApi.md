@@ -54,7 +54,7 @@ Clear out-of-office status for an email address. Requires Growth+ plan.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**email** | **String** | Email address | [required] |
+**email** | **String** |  | [required] |
 
 ### Return type
 
@@ -84,7 +84,7 @@ Check if a specific email address is currently out-of-office. Requires Growth+ p
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**email** | **String** | Email address to check | [required] |
+**email** | **String** |  | [required] |
 
 ### Return type
 
@@ -146,7 +146,7 @@ Manually set or clear out-of-office status for an email. Requires Growth+ plan.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**email** | **String** | Email address | [required] |
+**email** | **String** |  | [required] |
 **update_ooo_contact_request** | [**UpdateOooContactRequest**](UpdateOooContactRequest.md) |  | [required] |
 
 ### Return type

@@ -27,9 +27,9 @@ pub enum GetPixelSettingsError {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 #[serde(untagged)]
 pub enum UpdatePixelSettingsError {
+    Status404(models::ErrorResponse),
     Status400(models::ErrorResponse),
     Status401(models::ErrorResponse),
-    Status404(models::ErrorResponse),
     UnknownValue(serde_json::Value),
 }
 

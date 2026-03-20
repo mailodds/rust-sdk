@@ -30,7 +30,7 @@ Add a single contact to a contact list.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**list_id** | **String** | Contact list ID | [required] |
+**list_id** | **String** |  | [required] |
 **add_contact_request** | [**AddContactRequest**](AddContactRequest.md) |  | [required] |
 
 ### Return type
@@ -61,7 +61,7 @@ Append validated emails from additional jobs to an existing contact list. Duplic
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**list_id** | **String** | Contact list UUID | [required] |
+**list_id** | **String** |  | [required] |
 **append_to_contact_list_request** | [**AppendToContactListRequest**](AppendToContactListRequest.md) |  | [required] |
 
 ### Return type
@@ -122,8 +122,8 @@ Remove a single contact from a contact list.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**list_id** | **String** | Contact list ID | [required] |
-**contact_id** | **String** | Contact ID | [required] |
+**list_id** | **String** |  | [required] |
+**contact_id** | **String** |  | [required] |
 
 ### Return type
 
@@ -153,7 +153,7 @@ Permanently delete a contact list and all its entries.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**list_id** | **String** | Contact list UUID | [required] |
+**list_id** | **String** |  | [required] |
 
 ### Return type
 
@@ -183,7 +183,7 @@ Export a contact list as CSV.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**list_id** | **String** | Contact list ID | [required] |
+**list_id** | **String** |  | [required] |
 
 ### Return type
 
@@ -243,7 +243,7 @@ Import contacts into a list from a CSV file (max 10MB).
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**list_id** | **String** | Contact list ID | [required] |
+**list_id** | **String** |  | [required] |
 **file** | **std::path::PathBuf** | CSV file (max 10MB) | [required] |
 **column_mapping** | Option<**String**> | JSON mapping of CSV columns to contact fields |  |
 **consent_source** | Option<**String**> | Source of consent for imported contacts |  |
@@ -308,7 +308,7 @@ Query contact list entries with structured filters. Supports filtering by valida
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**list_id** | **String** | Contact list UUID | [required] |
+**list_id** | **String** |  | [required] |
 **query_contact_list_request** | [**QueryContactListRequest**](QueryContactListRequest.md) |  | [required] |
 
 ### Return type
@@ -339,8 +339,8 @@ Update a single contact in a contact list.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**list_id** | **String** | Contact list ID | [required] |
-**contact_id** | **String** | Contact ID | [required] |
+**list_id** | **String** |  | [required] |
+**contact_id** | **String** |  | [required] |
 **update_contact_request** | [**UpdateContactRequest**](UpdateContactRequest.md) |  | [required] |
 
 ### Return type

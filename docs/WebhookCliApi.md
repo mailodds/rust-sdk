@@ -53,7 +53,7 @@ Close a webhook CLI forwarding session.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**session_id** | **String** | Session ID | [required] |
+**session_id** | **String** |  | [required] |
 
 ### Return type
 
@@ -113,7 +113,7 @@ Replay a historical webhook delivery to active CLI sessions.
 
 Name | Type | Description  | Required | Notes
 ------------- | ------------- | ------------- | ------------- | -------------
-**delivery_id** | **i32** | Delivery ID | [required] |
+**delivery_id** | **i32** |  | [required] |
 
 ### Return type
 

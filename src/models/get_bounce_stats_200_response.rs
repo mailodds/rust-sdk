@@ -18,7 +18,7 @@ pub struct GetBounceStats200Response {
     #[serde(rename = "request_id", skip_serializing_if = "Option::is_none")]
     pub request_id: Option<String>,
     #[serde(rename = "stats", skip_serializing_if = "Option::is_none")]
-    pub stats: Option<Vec<serde_json::Value>>,
+    pub stats: Option<Box<models::GetBounceStats200ResponseStats>>,
 }
 
 impl GetBounceStats200Response {

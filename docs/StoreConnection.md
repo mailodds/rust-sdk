@@ -6,7 +6,7 @@ Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
 **id** | Option<**String**> | Store connection UUID | [optional]
 **account_id** | Option<**i32**> |  | [optional]
-**platform** | Option<**Platform**> | E-commerce platform (enum: woocommerce, prestashop, shopify, feed) | [optional]
+**platform** | Option<**Platform**> | E-commerce platform (enum: woocommerce, prestashop, shopify, feed, custom) | [optional]
 **store_name** | Option<**String**> |  | [optional]
 **store_url** | Option<**String**> |  | [optional]
 **status** | Option<**Status**> |  (enum: pending, connected, active, syncing, error, disconnected) | [optional]

@@ -172,6 +172,8 @@ pub mod get_bounce_records_200_response_records_inner;
 pub use self::get_bounce_records_200_response_records_inner::GetBounceRecords200ResponseRecordsInner;
 pub mod get_bounce_stats_200_response;
 pub use self::get_bounce_stats_200_response::GetBounceStats200Response;
+pub mod get_bounce_stats_200_response_stats;
+pub use self::get_bounce_stats_200_response_stats::GetBounceStats200ResponseStats;
 pub mod get_bounce_stats_summary_200_response;
 pub use self::get_bounce_stats_summary_200_response::GetBounceStatsSummary200Response;
 pub mod get_campaign_ab_results_200_response;

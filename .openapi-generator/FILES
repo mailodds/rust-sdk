@@ -35,8 +35,6 @@ docs/BounceAnalysisResponse.md
 docs/BounceAnalysisResponseAnalysis.md
 docs/BounceAnalysisResponseAnalysisCategories.md
 docs/BounceAnalysisResponseAnalysisTopDomainsInner.md
-docs/BulkUpdateProducts200Response.md
-docs/BulkUpdateProductsRequest.md
 docs/BulkValidationApi.md
 docs/Campaign.md
 docs/CampaignAnalyticsApi.md
@@ -69,7 +67,6 @@ docs/CreatePolicyFromPresetRequest.md
 docs/CreatePolicyRequest.md
 docs/CreateSendingDomain201Response.md
 docs/CreateSendingDomainRequest.md
-docs/CreateStore201Response.md
 docs/CreateStoreRequest.md
 docs/CreateToken200Response.md
 docs/CreateVariantRequest.md
@@ -90,7 +87,6 @@ docs/DeliverRequestToInner.md
 docs/DeliverResponse.md
 docs/DeliverResponseDelivery.md
 docs/DeliverabilityAdvisorApi.md
-docs/DisconnectStore200Response.md
 docs/DkimManagementApi.md
 docs/DmarcDomain.md
 docs/DmarcMonitoringApi.md
@@ -151,7 +147,6 @@ docs/GetMessageEvents200ResponseSummary.md
 docs/GetOooStatus200Response.md
 docs/GetPixelSettings200Response.md
 docs/GetPresignedUploadRequest.md
-docs/GetProduct200Response.md
 docs/GetReplyForwarding200Response.md
 docs/GetReputation200Response.md
 docs/GetReputationTimeline200Response.md
@@ -167,7 +162,6 @@ docs/GetSendingDomainIdentityScore200Response.md
 docs/GetSendingStats200Response.md
 docs/GetSendingStats200ResponseStats.md
 docs/GetSubscribers200Response.md
-docs/GetSyncJobErrors200Response.md
 docs/GlobalSuppressionsApi.md
 docs/HealthCheck200Response.md
 docs/IdentityScoreCheck.md
@@ -193,8 +187,6 @@ docs/ListOooContacts200Response.md
 docs/ListSendingDomains200Response.md
 docs/ListServerTests200Response.md
 docs/ListSpamChecks200Response.md
-docs/ListStores200Response.md
-docs/ListSyncJobs200Response.md
 docs/ListWebhookDeliveries200Response.md
 docs/ListWebhookDeliveries200ResponseDeliveriesInner.md
 docs/ManagedSpfApi.md
@@ -203,6 +195,7 @@ docs/McpCapabilitiesPillarsInner.md
 docs/McpCapabilitiesPillarsInnerToolsInner.md
 docs/MessageEventsApi.md
 docs/OAuth20Api.md
+docs/OAuthClientRegistration.md
 docs/OAuthServerMetadata.md
 docs/OutOfOfficeApi.md
 docs/Pagination.md
@@ -223,12 +216,10 @@ docs/ProductFacets.md
 docs/ProductFacetsCategoriesInner.md
 docs/ProductFacetsPriceRangesInner.md
 docs/ProductFacetsStoresInner.md
-docs/ProductsApi.md
 docs/QueryContactList200Response.md
 docs/QueryContactList200ResponseEmailsInner.md
 docs/QueryContactListRequest.md
 docs/QueryContactListRequestFiltersInner.md
-docs/QueryProducts200Response.md
 docs/RemoveSuppression200Response.md
 docs/RemoveSuppressionRequest.md
 docs/ReplayWebhookDelivery200Response.md
@@ -260,7 +251,6 @@ docs/SpamCheck.md
 docs/SpamCheckChecks.md
 docs/SpamChecksApi.md
 docs/StoreConnection.md
-docs/StoreConnectionsApi.md
 docs/StoreProduct.md
 docs/SubscribeRequest.md
 docs/Subscriber.md
@@ -295,7 +285,6 @@ docs/UpdateOooContactRequest.md
 docs/UpdatePixelSettingsRequest.md
 docs/UpdatePolicyRequest.md
 docs/UpdateReplyForwardingRequest.md
-docs/UpdateStoreRequest.md
 docs/ValidateBatch200Response.md
 docs/ValidateBatch200ResponseSummary.md
 docs/ValidateBatchRequest.md
@@ -340,7 +329,6 @@ src/apis/o_auth20_api.rs
 src/apis/out_of_office_api.rs
 src/apis/pipeline_simulation_api.rs
 src/apis/pixel_settings_api.rs
-src/apis/products_api.rs
 src/apis/reputation_api.rs
 src/apis/reputation_policies_api.rs
 src/apis/sender_health_api.rs
@@ -348,7 +336,6 @@ src/apis/sending_delegations_api.rs
 src/apis/sending_domains_api.rs
 src/apis/server_tests_api.rs
 src/apis/spam_checks_api.rs
-src/apis/store_connections_api.rs
 src/apis/subscriber_lists_api.rs
 src/apis/suppression_lists_api.rs
 src/apis/system_api.rs
@@ -386,8 +373,6 @@ src/models/bounce_analysis_response.rs
 src/models/bounce_analysis_response_analysis.rs
 src/models/bounce_analysis_response_analysis_categories.rs
 src/models/bounce_analysis_response_analysis_top_domains_inner.rs
-src/models/bulk_update_products_200_response.rs
-src/models/bulk_update_products_request.rs
 src/models/campaign.rs
 src/models/campaign_response.rs
 src/models/campaign_stats.rs
@@ -414,7 +399,6 @@ src/models/create_policy_from_preset_request.rs
 src/models/create_policy_request.rs
 src/models/create_sending_domain_201_response.rs
 src/models/create_sending_domain_request.rs
-src/models/create_store_201_response.rs
 src/models/create_store_request.rs
 src/models/create_token_200_response.rs
 src/models/create_variant_request.rs
@@ -433,7 +417,6 @@ src/models/deliver_request_options.rs
 src/models/deliver_request_to_inner.rs
 src/models/deliver_response.rs
 src/models/deliver_response_delivery.rs
-src/models/disconnect_store_200_response.rs
 src/models/dmarc_domain.rs
 src/models/error_response.rs
 src/models/get_blacklist_history_200_response.rs
@@ -486,7 +469,6 @@ src/models/get_message_events_200_response_summary.rs
 src/models/get_ooo_status_200_response.rs
 src/models/get_pixel_settings_200_response.rs
 src/models/get_presigned_upload_request.rs
-src/models/get_product_200_response.rs
 src/models/get_reply_forwarding_200_response.rs
 src/models/get_reputation_200_response.rs
 src/models/get_reputation_timeline_200_response.rs
@@ -502,7 +484,6 @@ src/models/get_sending_domain_identity_score_200_response.rs
 src/models/get_sending_stats_200_response.rs
 src/models/get_sending_stats_200_response_stats.rs
 src/models/get_subscribers_200_response.rs
-src/models/get_sync_job_errors_200_response.rs
 src/models/health_check_200_response.rs
 src/models/identity_score_check.rs
 src/models/import_contact_list_200_response.rs
@@ -524,14 +505,13 @@ src/models/list_ooo_contacts_200_response.rs
 src/models/list_sending_domains_200_response.rs
 src/models/list_server_tests_200_response.rs
 src/models/list_spam_checks_200_response.rs
-src/models/list_stores_200_response.rs
-src/models/list_sync_jobs_200_response.rs
 src/models/list_webhook_deliveries_200_response.rs
 src/models/list_webhook_deliveries_200_response_deliveries_inner.rs
 src/models/mcp_capabilities.rs
 src/models/mcp_capabilities_pillars_inner.rs
 src/models/mcp_capabilities_pillars_inner_tools_inner.rs
 src/models/mod.rs
+src/models/o_auth_client_registration.rs
 src/models/o_auth_server_metadata.rs
 src/models/pagination.rs
 src/models/policy.rs
@@ -553,7 +533,6 @@ src/models/query_contact_list_200_response.rs
 src/models/query_contact_list_200_response_emails_inner.rs
 src/models/query_contact_list_request.rs
 src/models/query_contact_list_request_filters_inner.rs
-src/models/query_products_200_response.rs
 src/models/remove_suppression_200_response.rs
 src/models/remove_suppression_request.rs
 src/models/replay_webhook_delivery_200_response.rs
@@ -608,7 +587,6 @@ src/models/update_ooo_contact_request.rs
 src/models/update_pixel_settings_request.rs
 src/models/update_policy_request.rs
 src/models/update_reply_forwarding_request.rs
-src/models/update_store_request.rs
 src/models/validate_batch_200_response.rs
 src/models/validate_batch_200_response_summary.rs
 src/models/validate_batch_request.rs

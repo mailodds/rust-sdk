@@ -626,12 +626,12 @@ async fn main() {
 
                 // Update alert rule
                 let mut update_req = UpdateAlertRuleRequest::new();
-                update_req.threshold = Some(10.0);
+                update_req.threshold = Some(0.10);
                 match alert_rules_api::update_alert_rule(&config, &rule_id, update_req).await {
                     Ok(upd_resp) => {
                         let upd_rule = upd_resp.rule.as_ref().expect("alert.update missing rule");
                         let threshold = upd_rule.threshold.unwrap_or(0.0);
-                        if (threshold - 10.0).abs() < 0.01 { passed += 1; } else { failed += 1; println!("  FAIL: alert.update.threshold expected=10.0 got={threshold}"); }
+                        if (threshold - 0.10).abs() < 0.01 { passed += 1; } else { failed += 1; println!("  FAIL: alert.update.threshold expected=0.10 got={threshold}"); }
                     }
                     Err(e) => { failed += 1; println!("  FAIL: alert.update error: {e}"); }
                 }

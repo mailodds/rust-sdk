@@ -12,59 +12,53 @@ use crate::models;
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
-pub struct AlertRule {
-    #[serde(rename = "id", skip_serializing_if = "Option::is_none")]
-    pub id: Option<String>,
-    /// Monitored metric name
-    #[serde(rename = "metric", skip_serializing_if = "Option::is_none")]
-    pub metric: Option<String>,
-    /// Alert threshold value (0-1)
-    #[serde(rename = "threshold", skip_serializing_if = "Option::is_none")]
-    pub threshold: Option<f64>,
-    /// Notification channel
-    #[serde(rename = "channel", skip_serializing_if = "Option::is_none")]
-    pub channel: Option<String>,
-    /// Evaluation window in minutes
-    #[serde(rename = "window_minutes", skip_serializing_if = "Option::is_none")]
-    pub window_minutes: Option<WindowMinutes>,
-    #[serde(rename = "enabled", skip_serializing_if = "Option::is_none")]
-    pub enabled: Option<bool>,
-    #[serde(rename = "created_at", skip_serializing_if = "Option::is_none")]
-    pub created_at: Option<String>,
-    #[serde(rename = "updated_at", skip_serializing_if = "Option::is_none")]
-    pub updated_at: Option<String>,
+pub struct OAuthClientRegistration {
+    /// Issued client identifier
+    #[serde(rename = "client_id")]
+    pub client_id: String,
+    /// Human-readable client name
+    #[serde(rename = "client_name")]
+    pub client_name: String,
+    /// Registered redirect URIs
+    #[serde(rename = "redirect_uris")]
+    pub redirect_uris: Vec<String>,
+    /// Allowed grant types
+    #[serde(rename = "grant_types")]
+    pub grant_types: Vec<String>,
+    /// Allowed response types
+    #[serde(rename = "response_types")]
+    pub response_types: Vec<String>,
+    /// Token endpoint auth method
+    #[serde(rename = "token_endpoint_auth_method")]
+    pub token_endpoint_auth_method: String,
+    /// Allowed scope
+    #[serde(rename = "scope", skip_serializing_if = "Option::is_none")]
+    pub scope: Option<String>,
+    /// Unix timestamp of client registration
+    #[serde(rename = "client_id_issued_at")]
+    pub client_id_issued_at: i32,
+    /// Client secret (only for confidential clients, shown once)
+    #[serde(rename = "client_secret", skip_serializing_if = "Option::is_none")]
+    pub client_secret: Option<String>,
+    /// Secret expiry (0 = never)
+    #[serde(rename = "client_secret_expires_at", skip_serializing_if = "Option::is_none")]
+    pub client_secret_expires_at: Option<i32>,
 }
 
-impl AlertRule {
-    pub fn new() -> AlertRule {
-        AlertRule {
-            id: None,
-            metric: None,
-            threshold: None,
-            channel: None,
-            window_minutes: None,
-            enabled: None,
-            created_at: None,
-            updated_at: None,
+impl OAuthClientRegistration {
+    pub fn new(client_id: String, client_name: String, redirect_uris: Vec<String>, grant_types: Vec<String>, response_types: Vec<String>, token_endpoint_auth_method: String, client_id_issued_at: i32) -> OAuthClientRegistration {
+        OAuthClientRegistration {
+            client_id,
+            client_name,
+            redirect_uris,
+            grant_types,
+            response_types,
+            token_endpoint_auth_method,
+            scope: None,
+            client_id_issued_at,
+            client_secret: None,
+            client_secret_expires_at: None,
         }
-    }
-}
-/// Evaluation window in minutes
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
-pub enum WindowMinutes {
-    #[serde(rename = "15")]
-    Variant15,
-    #[serde(rename = "60")]
-    Variant60,
-    #[serde(rename = "1440")]
-    Variant1440,
-    #[serde(rename = "2880")]
-    Variant2880,
-}
-
-impl Default for WindowMinutes {
-    fn default() -> WindowMinutes {
-        Self::Variant15
     }
 }
 

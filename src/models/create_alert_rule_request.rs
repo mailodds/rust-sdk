@@ -16,7 +16,7 @@ pub struct CreateAlertRuleRequest {
     /// Metric to monitor (e.g., bounce_rate, complaint_rate)
     #[serde(rename = "metric")]
     pub metric: String,
-    /// Threshold value to trigger alert
+    /// Threshold value (0-1, e.g. 0.02 for 2%)
     #[serde(rename = "threshold")]
     pub threshold: f64,
     /// Notification channel (e.g., webhook)
@@ -24,7 +24,7 @@ pub struct CreateAlertRuleRequest {
     pub channel: String,
     /// Evaluation window in minutes
     #[serde(rename = "window_minutes", skip_serializing_if = "Option::is_none")]
-    pub window_minutes: Option<i32>,
+    pub window_minutes: Option<WindowMinutes>,
     #[serde(rename = "enabled", skip_serializing_if = "Option::is_none")]
     pub enabled: Option<bool>,
 }
@@ -38,6 +38,24 @@ impl CreateAlertRuleRequest {
             window_minutes: None,
             enabled: None,
         }
+    }
+}
+/// Evaluation window in minutes
+#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
+pub enum WindowMinutes {
+    #[serde(rename = "15")]
+    Variant15,
+    #[serde(rename = "60")]
+    Variant60,
+    #[serde(rename = "1440")]
+    Variant1440,
+    #[serde(rename = "2880")]
+    Variant2880,
+}
+
+impl Default for WindowMinutes {
+    fn default() -> WindowMinutes {
+        Self::Variant15
     }
 }
 

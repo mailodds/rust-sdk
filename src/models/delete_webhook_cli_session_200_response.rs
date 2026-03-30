@@ -13,6 +13,8 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Default, Debug, PartialEq, Serialize, Deserialize)]
 pub struct DeleteWebhookCliSession200Response {
+    #[serde(rename = "deleted", skip_serializing_if = "Option::is_none")]
+    pub deleted: Option<bool>,
     #[serde(rename = "status", skip_serializing_if = "Option::is_none")]
     pub status: Option<String>,
 }
@@ -20,6 +22,7 @@ pub struct DeleteWebhookCliSession200Response {
 impl DeleteWebhookCliSession200Response {
     pub fn new() -> DeleteWebhookCliSession200Response {
         DeleteWebhookCliSession200Response {
+            deleted: None,
             status: None,
         }
     }

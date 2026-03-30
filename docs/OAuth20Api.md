@@ -1,12 +1,13 @@
 # \OAuth20Api
 
-All URIs are relative to *https://api.mailodds.com/v1*
+All URIs are relative to *https://api.mailodds.com*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**create_token**](OAuth20Api.md#create_token) | **POST** /oauth/token | Create token
 [**get_jwks**](OAuth20Api.md#get_jwks) | **GET** /.well-known/jwks.json | Get JSON Web Key Set
 [**introspect_token**](OAuth20Api.md#introspect_token) | **POST** /oauth/introspect | Introspect token
+[**oauth_register_client**](OAuth20Api.md#oauth_register_client) | **POST** /oauth/register | Register OAuth client
 [**oauth_server_metadata**](OAuth20Api.md#oauth_server_metadata) | **GET** /.well-known/oauth-authorization-server | OAuth server metadata
 [**revoke_token**](OAuth20Api.md#revoke_token) | **POST** /oauth/revoke | Revoke token
 
@@ -104,6 +105,33 @@ No authorization required
 ### HTTP request headers
 
 - **Content-Type**: application/x-www-form-urlencoded
+- **Accept**: application/json
+
+[[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)
+
+
+## oauth_register_client
+
+> models::OAuthClientRegistration oauth_register_client()
+Register OAuth client
+
+Dynamic Client Registration (RFC 7591). Allows MCP clients to auto-register without user interaction.
+
+### Parameters
+
+This endpoint does not need any parameter.
+
+### Return type
+
+[**models::OAuthClientRegistration**](OAuthClientRegistration.md)
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+- **Content-Type**: Not defined
 - **Accept**: application/json
 
 [[Back to top]](#) [[Back to API list]](../README.md#documentation-for-api-endpoints) [[Back to Model list]](../README.md#documentation-for-models) [[Back to README]](../README.md)

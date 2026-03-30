@@ -19,8 +19,9 @@ pub struct UpdateAlertRuleRequest {
     pub threshold: Option<f64>,
     #[serde(rename = "channel", skip_serializing_if = "Option::is_none")]
     pub channel: Option<String>,
+    /// Evaluation window in minutes (15, 60, 1440, or 2880)
     #[serde(rename = "window_minutes", skip_serializing_if = "Option::is_none")]
-    pub window_minutes: Option<WindowMinutes>,
+    pub window_minutes: Option<i32>,
     #[serde(rename = "enabled", skip_serializing_if = "Option::is_none")]
     pub enabled: Option<bool>,
 }
@@ -34,24 +35,6 @@ impl UpdateAlertRuleRequest {
             window_minutes: None,
             enabled: None,
         }
-    }
-}
-/// 
-#[derive(Clone, Copy, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, Serialize, Deserialize)]
-pub enum WindowMinutes {
-    #[serde(rename = "15")]
-    Variant15,
-    #[serde(rename = "60")]
-    Variant60,
-    #[serde(rename = "1440")]
-    Variant1440,
-    #[serde(rename = "2880")]
-    Variant2880,
-}
-
-impl Default for WindowMinutes {
-    fn default() -> WindowMinutes {
-        Self::Variant15
     }
 }
 
